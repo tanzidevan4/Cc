@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Dev Mode (v3.1)</title>
+  <title>CC Generator - Dev Mode (v4)</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
 
-  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-[90%] max-w-2xl text-white">
-    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (v3.1)</h1>
+  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-[95%] max-w-3xl text-white">
+    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (v4)</h1>
 
     <!-- BIN -->
     <label class="block mb-2 text-sm">BIN / Pattern:</label>
@@ -33,38 +33,55 @@
           <option value="random">Random</option>
         </select>
       </div>
-    </div>
-
-    <!-- CVV + Quantity -->
-    <div class="flex gap-4 mb-4">
       <div class="flex-1">
         <label class="block mb-2 text-sm">CVV2:</label>
         <input type="text" id="cvv" placeholder="Leave blank for random" 
           class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
       </div>
       <div class="flex-1">
-        <label class="block mb-2 text-sm">Quantity:</label>
+        <label class="block mb-2 text-sm">Qty:</label>
         <input type="number" id="qty" value="10" min="1" max="50" 
           class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
       </div>
     </div>
 
     <!-- Buttons -->
-    <div class="flex gap-4 mb-4">
-      <button onclick="generate()" class="flex-1 bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
-      <button onclick="copyCards()" class="flex-1 bg-green-400 text-black font-bold rounded-lg py-3 hover:bg-green-300 transition">Copy</button>
-    </div>
+    <button onclick="generate()" 
+      class="w-full mb-6 bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
 
-    <!-- Output -->
-    <textarea id="result" placeholder="Generated cards will appear here..." 
-      class="w-full h-40 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400"></textarea>
+    <!-- Results -->
+    <div id="result-container" class="hidden">
+      <table class="w-full text-left mb-4">
+        <thead class="text-cyan-400">
+          <tr>
+            <th class="pb-2">Card Number</th>
+            <th class="pb-2">MM</th>
+            <th class="pb-2">YY</th>
+            <th class="pb-2">CVV</th>
+            <th class="pb-2"></th>
+          </tr>
+        </thead>
+        <tbody id="result-table" class="text-sm"></tbody>
+      </table>
+
+      <div class="flex items-center justify-between">
+        <button onclick="copyAll()" class="bg-green-400 text-black font-bold rounded-lg px-4 py-2 hover:bg-green-300 transition">Copy All</button>
+        
+        <!-- Toggle -->
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" id="copy-cc-only" class="w-4 h-4">
+          Copy CC Only
+        </label>
+
+        <div id="total-count" class="text-cyan-300 text-sm font-bold"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Toast -->
   <div id="toast" class="hidden fixed bottom-6 bg-cyan-500 text-black px-6 py-3 rounded-lg shadow-lg font-bold"></div>
 
 <script>
-  // Fill year dropdown (2024-2099)
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const option = document.createElement('option');
@@ -84,7 +101,6 @@
     return Math.floor(Math.random() * 10);
   }
 
-  // Check Luhn validity
   function isValidLuhn(number) {
     let sum = 0;
     let shouldDouble = false;
@@ -100,10 +116,8 @@
     return sum % 10 === 0;
   }
 
-  // Generate number with placeholders and ensure Luhn valid
   function generatePattern(pattern, isAmex) {
-    let cleanPattern = pattern.replace(/\s|-/g, ''); // remove spaces or dashes
-
+    let cleanPattern = pattern.replace(/\s|-/g, '');
     let targetLength = isAmex ? 15 : 16;
     if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength);
 
@@ -139,13 +153,18 @@
     return Array.from({ length }, () => randomDigit()).join('');
   }
 
+  let generatedData = [];
+
   function generate() {
-    let pattern = document.getElementById('bin').value.trim();
-    let month = document.getElementById('month').value;
-    let year = document.getElementById('year').value;
-    let cvv = document.getElementById('cvv').value;
-    let qty = parseInt(document.getElementById('qty').value);
-    let output = [];
+    const pattern = document.getElementById('bin').value.trim();
+    const month = document.getElementById('month').value;
+    const year = document.getElementById('year').value;
+    const cvv = document.getElementById('cvv').value;
+    const qty = parseInt(document.getElementById('qty').value);
+    const table = document.getElementById('result-table');
+    const container = document.getElementById('result-container');
+    table.innerHTML = '';
+    generatedData = [];
 
     if (pattern.length < 6) {
       showToast("❌ Pattern must be at least 6 characters!");
@@ -154,7 +173,7 @@
 
     const isAmex = pattern.startsWith("3");
     const now = new Date();
-    const currentYear = now.getFullYear() % 100; 
+    const currentYear = now.getFullYear() % 100;
     const currentMonth = now.getMonth() + 1;
 
     for (let i = 0; i < qty; i++) {
@@ -184,18 +203,47 @@
       let cvvLength = isAmex ? 4 : 3;
       let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
 
-      output.push(`${card}|${mm}|${yy}|${ccv}`);
+      generatedData.push({ card, mm, yy, ccv });
     }
 
-    document.getElementById('result').value = output.join('\n');
-    showToast("✅ Cards Generated!");
+    if (generatedData.length === 0) {
+      showToast("⚠️ No cards generated!");
+      return;
+    }
+
+    generatedData.forEach((data, idx) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="py-1">${data.card}</td>
+        <td class="py-1">${data.mm}</td>
+        <td class="py-1">${data.yy}</td>
+        <td class="py-1">${data.ccv}</td>
+        <td class="py-1">
+          <button onclick="copySingle(${idx})" class="text-cyan-400 hover:text-cyan-200">📋</button>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+
+    document.getElementById('total-count').innerText = `Total: ${generatedData.length} Cards`;
+    container.classList.remove('hidden');
   }
 
-  function copyCards() {
-    const result = document.getElementById('result');
-    result.select();
-    document.execCommand('copy');
-    showToast("📋 Cards Copied!");
+  function copySingle(index) {
+    const ccOnly = document.getElementById('copy-cc-only').checked;
+    const data = generatedData[index];
+    const text = ccOnly ? data.card : `${data.card}|${data.mm}|${data.yy}|${data.ccv}`;
+    navigator.clipboard.writeText(text);
+    showToast(ccOnly ? "📋 CC copied!" : "📋 Full card copied!");
+  }
+
+  function copyAll() {
+    const ccOnly = document.getElementById('copy-cc-only').checked;
+    const text = generatedData.map(data => 
+      ccOnly ? data.card : `${data.card}|${data.mm}|${data.yy}|${data.ccv}`
+    ).join('\n');
+    navigator.clipboard.writeText(text);
+    showToast(ccOnly ? "📋 All CC copied!" : "📋 All cards copied!");
   }
 </script>
 
