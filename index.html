@@ -68,7 +68,7 @@
       </div>
 
       <!-- Generate Button -->
-      <button onclick="generate()" 
+      <button id="generateBtn"
         class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
     </div>
 
@@ -93,7 +93,7 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <button onclick="copyAll()" 
+        <button id="copyAllBtn"
           class="bg-green-400 text-black font-bold rounded-lg py-3 px-6 hover:bg-green-300 transition">COPY ALL</button>
         
         <!-- TOGGLE COPY CC ONLY -->
@@ -122,6 +122,9 @@
     option.textContent = y.toString();
     yearSelect.appendChild(option);
   }
+
+  const tableBody = document.querySelector("#ccTable tbody");
+  const ccOnlyToggle = document.getElementById("ccOnlyToggle");
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
@@ -164,8 +167,7 @@
 
   function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
 
-  function generate() {
-    const tableBody = document.querySelector("#ccTable tbody");
+  function generateCards() {
     tableBody.innerHTML = "";
 
     let pattern = document.getElementById('bin').value.trim();
@@ -193,4 +195,68 @@
           ? (month === "random" 
               ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') 
               : month)
-          : (month === "random"
+          : (month === "random" 
+              ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
+              : month);
+      } else {
+        yy = year;
+        mm = (month === "random") 
+          ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
+          : month;
+      }
+
+      let cvvLength = isAmex ? 4 : 3;
+      let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
+
+      output.push(`${card}|${mm}|${yy}|${ccv}`);
+    }
+
+    // Add rows to table with event listeners
+    output.forEach((line, index) => {
+      const row = document.createElement("tr");
+
+      const tdIndex = document.createElement("td");
+      tdIndex.className = "px-3 py-2";
+      tdIndex.textContent = index + 1;
+
+      const tdCard = document.createElement("td");
+      tdCard.className = "px-3 py-2 font-mono";
+      tdCard.textContent = line;
+
+      const tdAction = document.createElement("td");
+      tdAction.className = "px-3 py-2 text-center";
+
+      const btnCopy = document.createElement("button");
+      btnCopy.className = "bg-cyan-400 text-black px-3 py-1 text-sm rounded-md hover:bg-cyan-300 transition";
+      btnCopy.textContent = "Copy";
+      btnCopy.addEventListener("click", () => copySingle(line));
+
+      tdAction.appendChild(btnCopy);
+      row.appendChild(tdIndex);
+      row.appendChild(tdCard);
+      row.appendChild(tdAction);
+
+      tableBody.appendChild(row);
+    });
+
+    showToast("✅ Cards Generated!");
+  }
+
+  function copySingle(line) {
+    const textToCopy = ccOnlyToggle.checked ? line.split('|')[0] : line;
+    navigator.clipboard.writeText(textToCopy);
+    showToast(ccOnlyToggle.checked ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
+  }
+
+  function copyAll() {
+    const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
+      .map(td => td.textContent);
+    if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
+    const textToCopy = ccOnlyToggle.checked ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
+    navigator.clipboard.writeText(textToCopy);
+    showToast(ccOnlyToggle.checked ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
+  }
+
+  // Event listeners
+  document.getElementById("generateBtn").addEventListener("click", generateCards);
+  document.getElementById("copyAllBtn").addEvent
