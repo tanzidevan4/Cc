@@ -71,14 +71,27 @@
         class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
     </div>
 
-    <!-- RIGHT SIDE - OUTPUT -->
+    <!-- RIGHT SIDE - OUTPUT TABLE -->
     <div class="flex flex-col">
       <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
-      <textarea id="result" placeholder="Generated cards will appear here..." 
-        class="w-full h-56 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400 mb-4"></textarea>
+      
+      <div class="overflow-hidden rounded-lg bg-white/20 mb-4">
+        <table class="w-full text-left" id="ccTable">
+          <thead class="bg-white/10 text-xs uppercase">
+            <tr>
+              <th class="px-3 py-2">#</th>
+              <th class="px-3 py-2">Card Details</th>
+              <th class="px-3 py-2 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm divide-y divide-white/10">
+            <!-- CC rows dynamically generated here -->
+          </tbody>
+        </table>
+      </div>
 
       <div class="flex items-center justify-between">
-        <button onclick="copyCards()" 
+        <button onclick="copyAll()" 
           class="bg-green-400 text-black font-bold rounded-lg py-3 px-6 hover:bg-green-300 transition">COPY ALL</button>
         
         <!-- TOGGLE COPY CC ONLY -->
@@ -172,6 +185,9 @@
   }
 
   function generate() {
+    const tableBody = document.querySelector("#ccTable tbody");
+    tableBody.innerHTML = "";
+
     let pattern = document.getElementById('bin').value.trim();
     let month = document.getElementById('month').value;
     let year = document.getElementById('year').value;
@@ -218,26 +234,39 @@
       output.push(`${card}|${mm}|${yy}|${ccv}`);
     }
 
-    document.getElementById('result').value = output.join('\n');
+    // Add rows to table
+    output.forEach((line, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="px-3 py-2">${index + 1}</td>
+        <td class="px-3 py-2">${line}</td>
+        <td class="px-3 py-2 text-center">
+          <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
+            onclick="copySingle('${line}')">Copy</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+
     showToast("✅ Cards Generated!");
   }
 
-  function copyCards() {
-    const result = document.getElementById('result').value.split('\n');
+  function copySingle(line) {
     const ccOnly = document.getElementById('ccOnlyToggle').checked;
+    const textToCopy = ccOnly ? line.split('|')[0] : line;
+    navigator.clipboard.writeText(textToCopy);
+    showToast(ccOnly ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
+  }
 
-    if (result.length === 0 || result[0] === "") {
+  function copyAll() {
+    const ccOnly = document.getElementById('ccOnlyToggle').checked;
+    const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
+      .map(td => td.textContent);
+    if (lines.length === 0) {
       showToast("⚠️ Nothing to copy!");
       return;
     }
-
-    let textToCopy = "";
-    if (ccOnly) {
-      textToCopy = result.map(line => line.split('|')[0]).join('\n');
-    } else {
-      textToCopy = result.join('\n');
-    }
-
+    const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
     navigator.clipboard.writeText(textToCopy);
     showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
   }
