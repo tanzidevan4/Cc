@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Dev Mode (v2)</title>
+  <title>CC Generator - Dev Mode (v3)</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
 
-  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-[90%] max-w-2xl text-white animate-fadeIn">
-    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (v2)</h1>
+  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-[90%] max-w-2xl text-white">
+    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (v3)</h1>
 
     <!-- BIN -->
     <label class="block mb-2 text-sm">BIN / Pattern:</label>
@@ -101,9 +101,11 @@
   }
 
   // Generate number with placeholders and ensure Luhn valid
-  function generatePattern(pattern) {
+  function generatePattern(pattern, isAmex) {
     let cleanPattern = pattern.replace(/\s|-/g, ''); // remove spaces or dashes
-    if (cleanPattern.length > 16) cleanPattern = cleanPattern.substring(0, 16);
+
+    let targetLength = isAmex ? 15 : 16;
+    if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength);
 
     // Try multiple times until valid Luhn
     for (let attempt = 0; attempt < 1000; attempt++) {
@@ -115,9 +117,9 @@
           candidate += ch;
         }
       }
-      if (candidate.length < 16) {
+      if (candidate.length < targetLength) {
         // Fill remaining digits
-        while (candidate.length < 15) {
+        while (candidate.length < targetLength - 1) {
           candidate += randomDigit();
         }
         // Last digit (check digit)
@@ -129,7 +131,7 @@
           }
         }
       }
-      if (candidate.length === 16 && isValidLuhn(candidate)) {
+      if (candidate.length === targetLength && isValidLuhn(candidate)) {
         return candidate;
       }
     }
@@ -153,13 +155,20 @@
       return;
     }
 
+    // Amex detection
+    const isAmex = pattern.startsWith("3");
+
     for (let i = 0; i < qty; i++) {
-      let card = generatePattern(pattern);
+      let card = generatePattern(pattern, isAmex);
       if (!card) continue;
 
       let mm = (month === "random") ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month;
       let yy = (year === "random") ? (Math.floor(Math.random() * (99 - 24 + 1)) + 24).toString() : year;
-      let ccv = (cvv === "") ? randomNum(3) : cvv;
+
+      // CVV logic
+      let cvvLength = isAmex ? 4 : 3;
+      let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
+
       output.push(`${card}|${mm}|${yy}|${ccv}`);
     }
 
