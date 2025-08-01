@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Final UI</title>
+  <title>CC Generator - Final Compact UI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -81,12 +81,12 @@
         <table class="w-full text-left" id="ccTable">
           <thead class="bg-white/10 text-xs uppercase">
             <tr>
-              <th class="px-3 py-2">#</th>
-              <th class="px-3 py-2">Card Details</th>
-              <th class="px-3 py-2 text-center">Action</th>
+              <th class="px-3 py-2 w-10">#</th>
+              <th class="px-3 py-2 w-[75%]">Card Details</th>
+              <th class="px-3 py-2 text-center w-20">Action</th>
             </tr>
           </thead>
-          <tbody class="text-sm divide-y divide-white/10">
+          <tbody class="text-lg divide-y divide-white/10">
             <!-- Rows dynamically generated here -->
           </tbody>
         </table>
@@ -193,95 +193,4 @@
           ? (month === "random" 
               ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') 
               : month)
-          : (month === "random" 
-              ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
-              : month);
-      } else {
-        yy = year;
-        mm = (month === "random") 
-          ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
-          : month;
-      }
-
-      let cvvLength = isAmex ? 4 : 3;
-      let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
-
-      output.push(`${card}|${mm}|${yy}|${ccv}`);
-    }
-
-    // Add rows to table
-    output.forEach((line, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td class="px-3 py-2">${index + 1}</td>
-        <td class="px-3 py-2">${line}</td>
-        <td class="px-3 py-2 text-center">
-          <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
-            onclick="copySingle('${line}')">Copy</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-
-    showToast("✅ Cards Generated!");
-  }
-
-  function copySingle(line) {
-    const ccOnly = document.getElementById('ccOnlyToggle').checked;
-    const textToCopy = ccOnly ? line.split('|')[0] : line;
-    navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnly ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
-  }
-
-  function copyAll() {
-    const ccOnly = document.getElementById('ccOnlyToggle').checked;
-    const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
-      .map(td => td.textContent);
-    if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
-    const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
-    navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
-  }
-</script>
-
-<!-- Particles Animation -->
-<script>
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-
-  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  window.addEventListener('resize', resizeCanvas); resizeCanvas();
-
-  function createParticles() {
-    particles = [];
-    for (let i = 0; i < 50; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-      });
-    }
-  }
-  createParticles();
-
-  function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fill();
-      p.x += p.dx; p.y += p.dy;
-      if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-    });
-    requestAnimationFrame(drawParticles);
-  }
-  drawParticles();
-</script>
-
-</body>
-</html>
+          : (month === "random"
