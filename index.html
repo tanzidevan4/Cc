@@ -3,261 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator v4.3</title>
+  <title>CC Generator v4.4</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
     body {
-      background: #0f172a;
-      color: #fff;
-      display: flex;
-      height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      min-height: 100vh;
     }
-    .container {
-      display: flex;
-      width: 100%;
-    }
-    .left {
-      width: 35%;
-      background: #1e293b;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      border-right: 2px solid #334155;
-    }
-    .left h2 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #38bdf8;
-    }
-    .left input, .left select, .left button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    .left input, .left select {
-      background: #0f172a;
-      color: #fff;
-      border: 1px solid #475569;
-    }
-    .left button {
-      background: #38bdf8;
-      color: #000;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .left button:hover {
-      background: #0ea5e9;
-    }
-
-    .right {
-      width: 65%;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .output-container {
-      flex: 1;
-      background: #1e293b;
-      padding: 10px;
-      border-radius: 10px;
-      overflow-y: auto;
-      border: 1px solid #334155;
-    }
-    .output-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px;
-      border-bottom: 1px solid #334155;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeIn 0.4s forwards;
-    }
-    .output-row:last-child {
-      border-bottom: none;
-    }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .copy-btn {
-      background: none;
-      border: none;
-      color: #38bdf8;
-      font-size: 18px;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .copy-btn:hover {
-      color: #0ea5e9;
-    }
-    .bottom-controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    .bottom-controls button {
-      padding: 10px 15px;
-      background: #38bdf8;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: #000;
-      cursor: pointer;
-    }
-    .bottom-controls label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 14px;
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <!-- LEFT SIDE -->
-    <div class="left">
-      <h2>CC Generator</h2>
-      <input type="text" id="bin" placeholder="BIN (e.g. 4539xxxxxxxxxxxx)">
-      <select id="month">
-        <option value="">Random Month</option>
-        ${Array.from({length:12}, (_,i)=>`<option value="${String(i+1).padStart(2,'0')}">${String(i+1).padStart(2,'0')}</option>`).join('')}
-      </select>
-      <select id="year">
-        <option value="">Random Year</option>
-      </select>
-      <input type="text" id="cvv" placeholder="CVV (Blank = Random)">
-      <input type="number" id="amount" placeholder="Amount" value="10">
-      <button id="generate">GENERATE</button>
+<body class="flex items-center justify-center p-4 text-white">
+  <div class="glass rounded-2xl p-6 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6 shadow-2xl">
+
+    <!-- LEFT PANEL -->
+    <div>
+      <h1 class="text-2xl font-bold mb-4 text-center md:text-left">💳 CC Generator</h1>
+
+      <label class="block mb-2">BIN (Use x for random digits)</label>
+      <input id="bin" class="w-full glass rounded-lg p-2 mb-4 text-black" placeholder="519535xxxxxx1xxx">
+
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block mb-2">Month</label>
+          <select id="month" class="w-full glass rounded-lg p-2 text-black">
+            <option value="">Random Month</option>
+            <script>
+              for(let i=1;i<=12;i++){
+                document.write(`<option value="${i.toString().padStart(2,'0')}">${i.toString().padStart(2,'0')}</option>`);
+              }
+            </script>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-2">Year</label>
+          <select id="year" class="w-full glass rounded-lg p-2 text-black">
+            <option value="">Random Year</option>
+            <script>
+              const currentYear = new Date().getFullYear();
+              for(let y=currentYear; y<=currentYear+10; y++){
+                document.write(`<option value="${y}">${y}</option>`);
+              }
+            </script>
+          </select>
+        </div>
+      </div>
+
+      <label class="block mb-2">CVV</label>
+      <input id="cvv" class="w-full glass rounded-lg p-2 mb-4 text-black" placeholder="Leave blank = Random">
+
+      <label class="block mb-2">Quantity</label>
+      <input id="quantity" type="number" value="10" class="w-full glass rounded-lg p-2 mb-6 text-black">
+
+      <button id="generateBtn" class="w-full py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-lg font-bold transition">GENERATE</button>
     </div>
 
-    <!-- RIGHT SIDE -->
-    <div class="right">
-      <div class="output-container" id="output"></div>
-      <div class="bottom-controls">
-        <button id="copyAll">COPY ALL</button>
-        <label>
-          <input type="checkbox" id="copyOnlyCc">
-          Copy Only CC
-        </label>
+    <!-- RIGHT PANEL -->
+    <div>
+      <div id="outputContainer" class="glass rounded-lg p-4 h-[420px] overflow-y-auto space-y-2">
+        <p class="text-gray-300 text-center">Generated cards will appear here...</p>
+      </div>
+
+      <div class="flex gap-4 mt-4">
+        <button id="copyAll" class="flex-1 py-2 bg-green-500 hover:bg-green-600 rounded-lg font-bold">Copy All</button>
+        <button id="copyCC" class="flex-1 py-2 bg-purple-500 hover:bg-purple-600 rounded-lg font-bold">Copy CC Only</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Populate year dropdown
-    const yearSelect = document.getElementById("year");
-    const currentYear = new Date().getFullYear();
-    for(let y=currentYear; y<=currentYear+10; y++){
-      let opt = document.createElement("option");
-      opt.value = y;
-      opt.innerText = y;
-      yearSelect.appendChild(opt);
-    }
-
-    // Luhn Algorithm check
     function luhnCheck(num){
-      let arr = num.split("").reverse().map(x=>parseInt(x));
-      let sum = 0;
-      for(let i=0;i<arr.length;i++){
-        let val = arr[i];
-        if(i%2!==0){
-          val*=2;
-          if(val>9) val-=9;
+      let arr = num.split('').reverse().map(x => parseInt(x));
+      let sum = arr.reduce((acc, val, i) => {
+        if(i % 2 !== 0){
+          val *= 2;
+          if(val > 9) val -= 9;
         }
-        sum+=val;
-      }
-      return sum%10===0;
+        return acc + val;
+      }, 0);
+      return sum % 10 === 0;
     }
 
-    // Generate card number
-    function generateCard(bin){
-      let card="";
-      for(let i=0;i<bin.length;i++){
-        if(bin[i].toLowerCase()==="x" || bin[i]==="#"){
-          card += Math.floor(Math.random()*10);
+    function generateNumber(bin){
+      let number = "";
+      for (let i = 0; i < bin.length; i++) {
+        if(bin[i].toLowerCase() === 'x'){
+          number += Math.floor(Math.random() * 10);
         } else {
-          card += bin[i];
+          number += bin[i];
         }
       }
-      // If incomplete length (less than 16)
-      while(card.length<16){
-        card+=Math.floor(Math.random()*10);
+      if(!luhnCheck(number)){
+        let lastDigit = parseInt(number.slice(-1));
+        let newLast = (lastDigit + (10 - (luhnCheck(number.slice(0,-1)+'0') ? 0 : 1))) % 10;
+        number = number.slice(0, -1) + newLast;
       }
-      // Adjust last digit to pass luhn if invalid
-      if(!luhnCheck(card)){
-        let partial = card.slice(0,-1);
-        for(let d=0;d<=9;d++){
-          if(luhnCheck(partial + d)){
-            card = partial + d;
-            break;
-          }
-        }
-      }
-      return card;
+      return number;
     }
 
-    // Copy function
-    function copyText(text){
-      navigator.clipboard.writeText(text);
-      alert("Copied!");
+    function copyToClipboard(text){
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied!");
+      });
     }
 
-    // Generate event
-    document.getElementById("generate").addEventListener("click", ()=>{
-      const bin = document.getElementById("bin").value.trim();
+    const generateBtn = document.getElementById("generateBtn");
+    const outputContainer = document.getElementById("outputContainer");
+
+    generateBtn.addEventListener("click", () => {
+      const bin = document.getElementById("bin").value;
       const month = document.getElementById("month").value;
       const year = document.getElementById("year").value;
-      const cvv = document.getElementById("cvv").value.trim();
-      const amount = parseInt(document.getElementById("amount").value) || 10;
-      const output = document.getElementById("output");
-      const copyOnlyCc = document.getElementById("copyOnlyCc");
+      const cvv = document.getElementById("cvv").value;
+      const quantity = parseInt(document.getElementById("quantity").value);
 
-      output.innerHTML = "";
-      for(let i=0;i<amount;i++){
-        const card = generateCard(bin || "4xxxxxxxxxxxxxxx");
-        const m = month || String(Math.floor(Math.random()*12)+1).padStart(2,'0');
-        const y = year || Math.floor(Math.random()*11 + currentYear);
-        const c = cvv || String(Math.floor(100+Math.random()*900));
-        const line = `${card}|${m}|${y}|${c}`;
+      if(!bin){
+        alert("Please enter BIN");
+        return;
+      }
 
-        const row = document.createElement("div");
-        row.classList.add("output-row");
-        row.style.animationDelay = `${i*0.05}s`;
-        row.innerHTML = `
-          <span>${line}</span>
-          <button class="copy-btn">📋</button>
-        `;
-        row.querySelector(".copy-btn").addEventListener("click", ()=>{
-          copyText(copyOnlyCc.checked ? card : line);
-        });
-        output.appendChild(row);
+      outputContainer.innerHTML = "";
+
+      for(let i=0; i<quantity; i++){
+        const genNum = generateNumber(bin);
+        const genMonth = month || String(Math.floor(Math.random()*12 + 1)).padStart(2, '0');
+        const currentYear = new Date().getFullYear();
+        const genYear = year || (currentYear + Math.floor(Math.random() * 11));
+        const genCVV = cvv || Math.floor(Math.random() * 900 + 100);
+
+        const card = `${genNum}|${genMonth}|${genYear}|${genCVV}`;
+
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "flex justify-between items-center bg-white/10 px-3 py-2 rounded-lg";
+        cardDiv.innerHTML = `<span class="text-sm">${card}</span>
+          <button class="text-xl text-blue-300 hover:text-blue-500" title="Copy">
+            📋
+          </button>`;
+        cardDiv.querySelector("button").addEventListener("click", () => copyToClipboard(card));
+
+        outputContainer.appendChild(cardDiv);
       }
     });
 
-    // Copy All button
-    document.getElementById("copyAll").addEventListener("click", ()=>{
-      const output = document.getElementById("output");
-      const rows = output.querySelectorAll(".output-row span");
-      const copyOnlyCc = document.getElementById("copyOnlyCc");
-      let text = "";
-      rows.forEach(r=>{
-        const line = r.textContent;
-        const cc = line.split("|")[0];
-        text += (copyOnlyCc.checked ? cc : line) + "\n";
-      });
-      copyText(text.trim());
+    document.getElementById("copyAll").addEventListener("click", () => {
+      const allCards = [...outputContainer.querySelectorAll("span")].map(s => s.innerText).join("\n");
+      if(allCards) copyToClipboard(allCards);
+    });
+
+    document.getElementById("copyCC").addEventListener("click", () => {
+      const allCC = [...outputContainer.querySelectorAll("span")].map(s => s.innerText.split("|")[0]).join("\n");
+      if(allCC) copyToClipboard(allCC);
     });
   </script>
 </body>
