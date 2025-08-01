@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Next Level UI</title>
+  <title>CC Generator - Final UI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
     canvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index: -1; }
-    .toggle-input:checked + .toggle-bg {
-      background-color: #06b6d4;
-    }
-    .toggle-input:checked + .toggle-bg .toggle-dot {
-      transform: translateX(1.5rem);
-    }
+    .toggle-input:checked + .toggle-bg { background-color: #06b6d4; }
+    .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
@@ -75,7 +76,8 @@
     <div class="flex flex-col">
       <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
       
-      <div class="overflow-hidden rounded-lg bg-white/20 mb-4">
+      <!-- Fixed height + scrollable -->
+      <div class="rounded-lg bg-white/20 mb-4 max-h-64 overflow-y-auto">
         <table class="w-full text-left" id="ccTable">
           <thead class="bg-white/10 text-xs uppercase">
             <tr>
@@ -85,7 +87,7 @@
             </tr>
           </thead>
           <tbody class="text-sm divide-y divide-white/10">
-            <!-- CC rows dynamically generated here -->
+            <!-- Rows dynamically generated here -->
           </tbody>
         </table>
       </div>
@@ -128,21 +130,14 @@
     setTimeout(() => toast.classList.add('hidden'), 2000);
   }
 
-  function randomDigit() {
-    return Math.floor(Math.random() * 10);
-  }
+  function randomDigit() { return Math.floor(Math.random() * 10); }
 
   function isValidLuhn(number) {
-    let sum = 0;
-    let shouldDouble = false;
+    let sum = 0, shouldDouble = false;
     for (let i = number.length - 1; i >= 0; i--) {
       let digit = parseInt(number[i]);
-      if (shouldDouble) {
-        digit *= 2;
-        if (digit > 9) digit -= 9;
-      }
-      sum += digit;
-      shouldDouble = !shouldDouble;
+      if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+      sum += digit; shouldDouble = !shouldDouble;
     }
     return sum % 10 === 0;
   }
@@ -154,35 +149,20 @@
 
     for (let attempt = 0; attempt < 1000; attempt++) {
       let candidate = "";
-      for (let ch of cleanPattern) {
-        if (/[xX#]/.test(ch)) {
-          candidate += randomDigit();
-        } else if (/\d/.test(ch)) {
-          candidate += ch;
-        }
-      }
+      for (let ch of cleanPattern) candidate += /[xX#]/.test(ch) ? randomDigit() : ch;
       if (candidate.length < targetLength) {
-        while (candidate.length < targetLength - 1) {
-          candidate += randomDigit();
-        }
+        while (candidate.length < targetLength - 1) candidate += randomDigit();
         for (let d = 0; d <= 9; d++) {
           let temp = candidate + d;
-          if (isValidLuhn(temp)) {
-            candidate = temp;
-            break;
-          }
+          if (isValidLuhn(temp)) { candidate = temp; break; }
         }
       }
-      if (candidate.length === targetLength && isValidLuhn(candidate)) {
-        return candidate;
-      }
+      if (candidate.length === targetLength && isValidLuhn(candidate)) return candidate;
     }
     return null;
   }
 
-  function randomNum(length) {
-    return Array.from({ length }, () => randomDigit()).join('');
-  }
+  function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
 
   function generate() {
     const tableBody = document.querySelector("#ccTable tbody");
@@ -195,10 +175,7 @@
     let qty = parseInt(document.getElementById('qty').value);
     let output = [];
 
-    if (pattern.length < 6) {
-      showToast("❌ Pattern must be at least 6 characters!");
-      return;
-    }
+    if (pattern.length < 6) { showToast("❌ Pattern must be at least 6 characters!"); return; }
 
     const isAmex = pattern.startsWith("3");
     const now = new Date();
@@ -212,15 +189,13 @@
       let mm, yy;
       if (year === "random") {
         yy = Math.floor(Math.random() * 11) + currentYear;
-        if (yy === currentYear) {
-          mm = (month === "random") 
-            ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') 
-            : month;
-        } else {
-          mm = (month === "random") 
-            ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
-            : month;
-        }
+        mm = (yy === currentYear)
+          ? (month === "random" 
+              ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') 
+              : month)
+          : (month === "random" 
+              ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') 
+              : month);
       } else {
         yy = year;
         mm = (month === "random") 
@@ -262,10 +237,7 @@
     const ccOnly = document.getElementById('ccOnlyToggle').checked;
     const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
       .map(td => td.textContent);
-    if (lines.length === 0) {
-      showToast("⚠️ Nothing to copy!");
-      return;
-    }
+    if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
     const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
     navigator.clipboard.writeText(textToCopy);
     showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
@@ -278,12 +250,8 @@
   const ctx = canvas.getContext('2d');
   let particles = [];
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
   function createParticles() {
     particles = [];
@@ -306,9 +274,7 @@
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255,255,255,0.5)';
       ctx.fill();
-      p.x += p.dx;
-      p.y += p.dy;
-
+      p.x += p.dx; p.y += p.dy;
       if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
     });
