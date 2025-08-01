@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Dev Mode</title>
+  <title>CC Generator - Dev Mode (v2)</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
 
   <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 w-[90%] max-w-2xl text-white animate-fadeIn">
-    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (Dev)</h1>
+    <h1 class="text-3xl font-bold text-center text-cyan-400 mb-6">💳 CC Generator (v2)</h1>
 
     <!-- BIN -->
-    <label class="block mb-2 text-sm">BIN:</label>
-    <input type="text" id="bin" placeholder="Enter BIN (6-9 digits)" 
+    <label class="block mb-2 text-sm">BIN / Pattern:</label>
+    <input type="text" id="bin" placeholder="Enter BIN or pattern (x/# as placeholders)" 
       class="w-full mb-4 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
 
     <!-- Month + Year -->
@@ -64,7 +64,7 @@
   <div id="toast" class="hidden fixed bottom-6 bg-cyan-500 text-black px-6 py-3 rounded-lg shadow-lg font-bold"></div>
 
 <script>
-  // Year Dropdown fill (2024-2099)
+  // Fill year dropdown (2024-2099)
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const option = document.createElement('option');
@@ -73,7 +73,6 @@
     yearSelect.appendChild(option);
   }
 
-  // Toast message
   function showToast(msg) {
     const toast = document.getElementById('toast');
     toast.innerText = msg;
@@ -81,45 +80,83 @@
     setTimeout(() => toast.classList.add('hidden'), 2000);
   }
 
-  // Luhn Generator
-  function generateLuhn(bin, length) {
-    let number = bin;
-    while (number.length < length - 1) {
-      number += Math.floor(Math.random() * 10);
-    }
+  function randomDigit() {
+    return Math.floor(Math.random() * 10);
+  }
+
+  // Check Luhn validity
+  function isValidLuhn(number) {
     let sum = 0;
-    let reversed = number.split('').reverse();
-    for (let i = 0; i < reversed.length; i++) {
-      let digit = parseInt(reversed[i]);
-      if (i % 2 === 0) {
+    let shouldDouble = false;
+    for (let i = number.length - 1; i >= 0; i--) {
+      let digit = parseInt(number[i]);
+      if (shouldDouble) {
         digit *= 2;
         if (digit > 9) digit -= 9;
       }
       sum += digit;
+      shouldDouble = !shouldDouble;
     }
-    let checkDigit = (10 - (sum % 10)) % 10;
-    return number + checkDigit;
+    return sum % 10 === 0;
+  }
+
+  // Generate number with placeholders and ensure Luhn valid
+  function generatePattern(pattern) {
+    let cleanPattern = pattern.replace(/\s|-/g, ''); // remove spaces or dashes
+    if (cleanPattern.length > 16) cleanPattern = cleanPattern.substring(0, 16);
+
+    // Try multiple times until valid Luhn
+    for (let attempt = 0; attempt < 1000; attempt++) {
+      let candidate = "";
+      for (let ch of cleanPattern) {
+        if (/[xX#]/.test(ch)) {
+          candidate += randomDigit();
+        } else if (/\d/.test(ch)) {
+          candidate += ch;
+        }
+      }
+      if (candidate.length < 16) {
+        // Fill remaining digits
+        while (candidate.length < 15) {
+          candidate += randomDigit();
+        }
+        // Last digit (check digit)
+        for (let d = 0; d <= 9; d++) {
+          let temp = candidate + d;
+          if (isValidLuhn(temp)) {
+            candidate = temp;
+            break;
+          }
+        }
+      }
+      if (candidate.length === 16 && isValidLuhn(candidate)) {
+        return candidate;
+      }
+    }
+    return null;
   }
 
   function randomNum(length) {
-    return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+    return Array.from({ length }, () => randomDigit()).join('');
   }
 
   function generate() {
-    let bin = document.getElementById('bin').value.replace(/\D/g, '');
+    let pattern = document.getElementById('bin').value.trim();
     let month = document.getElementById('month').value;
     let year = document.getElementById('year').value;
     let cvv = document.getElementById('cvv').value;
     let qty = parseInt(document.getElementById('qty').value);
     let output = [];
 
-    if (bin.length < 6 || bin.length > 15) {
-      showToast("❌ BIN must be 6-15 digits!");
+    if (pattern.length < 6) {
+      showToast("❌ Pattern must be at least 6 characters!");
       return;
     }
 
     for (let i = 0; i < qty; i++) {
-      let card = generateLuhn(bin, 16);
+      let card = generatePattern(pattern);
+      if (!card) continue;
+
       let mm = (month === "random") ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month;
       let yy = (year === "random") ? (Math.floor(Math.random() * (99 - 24 + 1)) + 24).toString() : year;
       let ccv = (cvv === "") ? randomNum(3) : cvv;
