@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Bigger Font</title>
+  <title>CC Generator - Final Responsive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
@@ -21,17 +21,20 @@
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
       letter-spacing: 0.5px;
-      font-size: 18px; /* বড় font size by default */
+      font-size: 18px; /* বড় screen এ বড় font size */
     }
 
-    /* Small screen font & padding adjust */
+    /* Small screen font & wrapping adjust */
     @media (max-width: 640px) {
       #ccTableBody td {
         font-size: 14px;
         padding: 6px 4px;
       }
       #ccTableBody td:nth-child(2) {
-        word-break: break-all;
+        white-space: nowrap;      /* লাইন ভাঙবে না */
+        overflow: hidden;         /* অনেক বড় হলে লুকাবে */
+        text-overflow: ellipsis;  /* শেষে ... দেখাবে */
+        display: block;
         font-size: 13px;
         font-family: monospace;
       }
@@ -240,7 +243,7 @@
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="px-3 py-3 w-[10%]">${index + 1}</td>
-        <td class="px-3 py-3 w-[65%]">${line}</td>
+        <td class="px-3 py-3 w-[65%]" title="${line}">${line}</td>
         <td class="px-3 py-3 text-center w-[25%]">
           <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
             onclick="copySingle('${line}')">Copy</button>
