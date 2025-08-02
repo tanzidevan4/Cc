@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CC Generator - Final Corrected Version</title>
+    <title>CC Generator - Final Fixed Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -44,11 +44,10 @@
         .toggle-input:checked + .toggle-bg { background-color: var(--toggle-checked-bg); }
         .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
 
-        /* CSS from Base Script for font handling */
         #ccTableBody td:nth-child(2) {
             font-family: monospace;
-            white-space: nowrap; /* Keeps text in one line */
-            font-size: 18px;     /* Default for large screens */
+            white-space: nowrap;
+            font-size: 18px;
         }
         @media (max-width: 640px) {
             #ccTableBody td {
@@ -56,7 +55,7 @@
                 padding: 6px 4px;
             }
             #ccTableBody td:nth-child(2) {
-                font-size: 12px; /* Reduces font on small screens to fit */
+                font-size: 12px;
             }
             thead th {
                 font-size: 12px;
@@ -97,7 +96,6 @@
             <div class="flex flex-col flex-1">
                 <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
                 <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
-                    <!-- FINAL FIX: 'table-fixed' class has been REMOVED -->
                     <table class="w-full text-left">
                         <thead class="text-xs uppercase sticky top-0">
                             <tr>
@@ -107,8 +105,8 @@
                             </tr>
                         </thead>
                     </table>
-                    <div class="overflow-y-auto max-h-64 flex-1">
-                        <!-- FINAL FIX: 'table-fixed' class has been REMOVED -->
+                    <!-- THE ONLY CHANGE: Added 'overflow-x-auto' to this div -->
+                    <div class="overflow-y-auto max-h-64 flex-1 overflow-x-auto">
                         <table class="w-full text-left">
                             <tbody id="ccTableBody" class="text-lg"></tbody>
                         </table>
@@ -180,7 +178,6 @@
         function copySingle(line) { const ccOnly = document.getElementById('ccOnlyToggle').checked; const textToCopy = ccOnly ? line.split('|')[0] : line; navigator.clipboard.writeText(textToCopy); showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success"); }
         function copyAll() { const ccOnly = document.getElementById('ccOnlyToggle').checked; const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")].map(td => td.textContent); if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; } const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n'); navigator.clipboard.writeText(textToCopy); showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success"); }
         
-        // --- Added the adjustFontSize function from Base Script ---
         function adjustFontSize() {
             const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
             rows.forEach(cell => {
@@ -188,9 +185,8 @@
                 else { cell.style.fontSize = "18px"; }
             });
         }
-        window.addEventListener("resize", adjustFontSize); // Call on window resize
+        window.addEventListener("resize", adjustFontSize);
 
-        // --- PARTICLE SCRIPT ---
         const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); let particles = [];
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; createParticles(); }
         window.addEventListener('resize', resizeCanvas); resizeCanvas();
