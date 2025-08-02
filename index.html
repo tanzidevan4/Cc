@@ -11,14 +11,20 @@
     :root {
       --bg-color: #000;
       --text-color: #fff;
+      --btn-bg: #fff;
+      --btn-text: #000;
+      --particle-color: #fff;
       --glass-bg: rgba(255, 255, 255, 0.03);
       --table-head: rgba(255, 255, 255, 0.04);
       --row-bg: rgba(255, 255, 255, 0.02);
       --row-hover: rgba(255, 255, 255, 0.08);
     }
     .light {
-      --bg-color: #f9f9f9;
+      --bg-color: #fff;
       --text-color: #000;
+      --btn-bg: #000;
+      --btn-text: #fff;
+      --particle-color: #000;
       --glass-bg: rgba(0, 0, 0, 0.03);
       --table-head: rgba(0, 0, 0, 0.04);
       --row-bg: rgba(0, 0, 0, 0.02);
@@ -67,6 +73,17 @@
       background: var(--row-hover);
     }
 
+    button {
+      background: var(--btn-bg) !important;
+      color: var(--btn-text) !important;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+
     #toast {
       display: flex;
       align-items: center;
@@ -74,13 +91,10 @@
       opacity: 0;
       transform: translateY(40px);
       box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      background: var(--btn-bg);
+      color: var(--btn-text);
     }
     #toast svg { width: 22px; height: 22px; flex-shrink:0; }
-
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(255,255,255,0.3);
-    }
 
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
@@ -99,8 +113,8 @@
       top: 20px;
       right: 20px;
       z-index: 50;
-      background: var(--text-color);
-      color: var(--bg-color);
+      background: var(--btn-bg);
+      color: var(--btn-text);
       border: none;
       padding: 8px 14px;
       border-radius: 8px;
@@ -157,8 +171,7 @@
           </div>
         </div>
       </div>
-      <button onclick="generate()" 
-        class="w-full bg-white text-black font-bold rounded-xl py-3 hover:bg-gray-200 transition">Generate</button>
+      <button onclick="generate()" class="w-full rounded-xl py-3">Generate</button>
     </div>
 
     <!-- RIGHT SIDE -->
@@ -184,8 +197,7 @@
       </div>
 
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
-        <button onclick="copyAll()" 
-          class="bg-white text-black font-bold rounded-xl py-3 px-6 hover:bg-gray-200 transition">COPY ALL</button>
+        <button onclick="copyAll()" class="rounded-xl py-3 px-6">COPY ALL</button>
         
         <div class="flex items-center justify-center gap-2">
           <span class="text-xs">Copy CC Only</span>
@@ -201,16 +213,18 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded-xl font-bold">
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
     <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
     <span id="toastMsg"></span>
   </div>
 
 <script>
+  // Card fade-in
   window.addEventListener("load", () => {
     gsap.to("#mainCard", {opacity:1, y:0, duration:1, ease:"power3.out"});
   });
 
+  // Year dropdown fill
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const option = document.createElement('option');
@@ -318,8 +332,7 @@
         <td class="px-3 py-3 w-[10%]">${index + 1}</td>
         <td class="px-3 py-3 w-[65%]">${line}</td>
         <td class="px-3 py-3 text-center w-[25%]">
-          <button class="bg-white text-black px-3 py-1 rounded-md hover:bg-gray-200 transition"
-            onclick="copySingle('${line}')">Copy</button>
+          <button class="rounded-md px-3 py-1" onclick="copySingle('${line}')">Copy</button>
         </td>
       `;
       tableBody.appendChild(row);
@@ -356,12 +369,6 @@
   }
   window.addEventListener("resize", adjustFontSize);
 
-  // Dark/Light Mode Toggle
-  const toggleMode = document.getElementById("toggleMode");
-  toggleMode.addEventListener("click", () => {
-    document.body.classList.toggle("light");
-    toggleMode.textContent = document.body.classList.contains("light") ? "Dark Mode 🌙" : "Light Mode 🌞";
-  });
-</script>
-</body>
-</html>
+  // Particle background
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext
