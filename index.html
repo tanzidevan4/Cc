@@ -104,11 +104,6 @@
         .btn-copy { background-color: var(--secondary-btn-bg); color: var(--secondary-btn-text); }
         .btn-copy:hover { background-color: var(--secondary-btn-hover-bg); }
         
-        input:focus, select:focus {
-             box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--focus-ring-color);
-             outline: none;
-        }
-
         #toast {
             display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(40px);
             box-shadow: 0 0 20px rgba(0,0,0,0.3); background: var(--toast-bg); color: var(--toast-text);
@@ -220,7 +215,7 @@
     </div>
 
     <script>
-        // --- FORM DATA SAVE/LOAD SCRIPT ---
+        // --- FUNCTION DEFINITIONS (GLOBAL SCOPE) ---
         function saveInputs() {
             const formData = { bin: document.getElementById('bin').value, month: document.getElementById('month').value, year: document.getElementById('year').value, cvv: document.getElementById('cvv').value, qty: document.getElementById('qty').value };
             localStorage.setItem('ccgen_form_data', JSON.stringify(formData));
@@ -236,22 +231,6 @@
                 document.getElementById('qty').value = formData.qty || '10';
             }
         }
-
-        // --- MAIN SCRIPT ---
-        window.addEventListener("load", () => {
-            gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
-            loadInputs(); 
-        });
-
-        const yearSelect = document.getElementById('year');
-        const startYear = new Date().getFullYear() % 100;
-        for (let y = startYear; y < startYear + 25; y++) {
-            const option = document.createElement('option');
-            option.value = y.toString();
-            option.textContent = (2000 + y).toString();
-            yearSelect.appendChild(option);
-        }
-
         function showToast(msg, type = "success") {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
@@ -264,9 +243,7 @@
             gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
             gsap.to(toast, { opacity: 0, y: 40, delay: 2, duration: 0.6, ease: "power2.in" });
         }
-
         function randomDigit() { return Math.floor(Math.random() * 10); }
-
         function isValidLuhn(number) {
             let sum = 0, shouldDouble = false;
             for (let i = number.length - 1; i >= 0; i--) {
@@ -276,7 +253,6 @@
             }
             return sum % 10 === 0;
         }
-
         function generatePattern(pattern, isAmex) {
             let cleanPattern = pattern.replace(/\s|-/g, ''), targetLength = isAmex ? 15 : 16;
             if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength);
@@ -291,10 +267,7 @@
             }
             return null;
         }
-
         function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
-        
-        // --- MODIFIED: generate() function reverted to the original logic ---
         function generate() {
             saveInputs();
             const tableBody = document.querySelector("#ccTableBody");
@@ -324,14 +297,12 @@
                 gsap.from(row, { opacity: 0, y: 20, duration: 0.3, delay: index * 0.05 });
             });
         }
-
         function copySingle(line) {
             const ccOnly = document.getElementById('ccOnlyToggle').checked;
             const textToCopy = ccOnly ? line.split('|')[0] : line;
             navigator.clipboard.writeText(textToCopy);
             showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success");
         }
-
         function copyAll() {
             const ccOnly = document.getElementById('ccOnlyToggle').checked;
             const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")].map(td => td.textContent);
@@ -341,42 +312,63 @@
             showToast(ccOnly ? "All " + (ccOnly ? "CC Numbers" : "Data") + " Copied!", "success");
         }
 
-        // --- THEME & SIMPLE PARTICLE SCRIPT ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('theme-icon-sun');
-        const moonIcon = document.getElementById('theme-icon-moon');
-        const rootEl = document.documentElement;
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        let particles = [], animationFrameId;
+        // --- SCRIPT INITIALIZATION (RUNS AFTER DOM IS LOADED) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- THEME & PARTICLE SETUP ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+            const rootEl = document.documentElement;
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            let particles = [], animationFrameId;
 
-        function startParticleAnimation() {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            canvas.width = document.body.scrollWidth; canvas.height = document.body.scrollHeight; particles = [];
-            const particleCount = 50;
-            for (let i = 0; i < particleCount; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: (Math.random() * 2) + 1, dx: (Math.random() - 0.5) * 0.4, dy: (Math.random() - 0.5) * 0.4 }); }
-            animateParticles();
-        }
+            function startParticleAnimation() {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                canvas.width = document.body.scrollWidth; canvas.height = document.body.scrollHeight; particles = [];
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: (Math.random() * 2) + 1, dx: (Math.random() - 0.5) * 0.4, dy: (Math.random() - 0.5) * 0.4 }); }
+                animateParticles();
+            }
 
-        function animateParticles() {
-            animationFrameId = requestAnimationFrame(animateParticles);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim();
-            ctx.fillStyle = particleColor;
-            particles.forEach(p => {
-                p.x += p.dx; p.y += p.dy;
-                if (p.x + p.radius > canvas.width || p.x - p.radius < 0) p.dx *= -1;
-                if (p.y + p.radius > canvas.height || p.y - p.radius < 0) p.dy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false); ctx.fill();
+            function animateParticles() {
+                animationFrameId = requestAnimationFrame(animateParticles);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim();
+                ctx.fillStyle = particleColor;
+                particles.forEach(p => {
+                    p.x += p.dx; p.y += p.dy;
+                    if (p.x + p.radius > canvas.width || p.x - p.radius < 0) p.dx *= -1;
+                    if (p.y + p.radius > canvas.height || p.y - p.radius < 0) p.dy *= -1;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false); ctx.fill();
+                });
+            }
+
+            if (localStorage.getItem('theme') === 'light') { rootEl.classList.add('light-mode'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); }
+            
+            themeToggleBtn.addEventListener('click', () => {
+                rootEl.classList.toggle('light-mode'); const isLight = rootEl.classList.contains('light-mode'); localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                sunIcon.classList.toggle('hidden', isLight); moonIcon.classList.toggle('hidden', !isLight); 
+                startParticleAnimation();
             });
-        }
-        if (localStorage.getItem('theme') === 'light') { rootEl.classList.add('light-mode'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); }
-        themeToggleBtn.addEventListener('click', () => {
-            rootEl.classList.toggle('light-mode'); const isLight = rootEl.classList.contains('light-mode'); localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            sunIcon.classList.toggle('hidden', isLight); moonIcon.classList.toggle('hidden', !isLight); startParticleAnimation();
+
+            window.addEventListener('resize', startParticleAnimation);
+            startParticleAnimation();
+
+            // --- YEAR DROPDOWN POPULATION ---
+            const yearSelect = document.getElementById('year');
+            const startYear = new Date().getFullYear() % 100;
+            for (let y = startYear; y < startYear + 25; y++) {
+                const option = document.createElement('option');
+                option.value = y.toString();
+                option.textContent = (2000 + y).toString();
+                yearSelect.appendChild(option);
+            }
+
+            // --- INITIALIZE FORM & ANIMATIONS ---
+            loadInputs();
+            gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
         });
-        window.addEventListener('resize', startParticleAnimation);
-        startParticleAnimation();
     </script>
 </body>
 </html>
