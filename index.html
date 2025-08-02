@@ -295,7 +295,6 @@
       output.push(`${card}|${mm}|${yy}|${ccv}`);
     }
 
-    // Animate rows
     output.forEach((line, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -310,7 +309,6 @@
       gsap.from(row, {opacity:0, y:20, duration:0.3, delay:index*0.05});
     });
 
-    adjustFontSize();
     showToast("Cards Generated!", "success");
   }
 
@@ -331,21 +329,18 @@
     showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success");
   }
 
-  function adjustFontSize() {
-    const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
-    rows.forEach(cell => {
-      if (window.innerWidth < 640) cell.style.fontSize = "12px";
-      else cell.style.fontSize = "18px";
-    });
-  }
-  window.addEventListener("resize", adjustFontSize);
-
-  // Particle background
+  // Particle animation
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas); 
+  resizeCanvas();
+
   function createParticles() {
     particles = [];
     for (let i = 0; i < 50; i++) {
@@ -359,8 +354,6 @@
     }
   }
   createParticles();
+
   function drawParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      ctx.beginPath();
-      ctx
