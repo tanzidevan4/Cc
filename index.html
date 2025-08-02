@@ -16,28 +16,6 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
-
-    /* Bulletproof Table Fix */
-    table { 
-      border-collapse: collapse;
-      width: 100%;
-    }
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #1e293b; /* slate-800 */
-      padding: 12px;
-      font-size: 0.85rem;
-      text-align: left;
-      z-index: 20;
-    }
-    thead th:last-child {
-      text-align: center;
-    }
-    tbody td {
-      padding: 14px 12px;
-      font-size: 1.05rem; /* বড় ফন্ট */
-    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
@@ -98,20 +76,26 @@
     <div class="flex flex-col">
       <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
       
-      <!-- Fixed height + scrollable -->
-      <div class="rounded-lg bg-white/20 mb-4 max-h-64 overflow-y-auto">
-        <table id="ccTable">
-          <thead>
+      <!-- Fixed header and scrollable body -->
+      <div class="rounded-lg bg-white/20 mb-4">
+        <!-- Header -->
+        <table class="w-full text-left">
+          <thead class="bg-slate-800 text-xs uppercase">
             <tr>
-              <th>#</th>
-              <th>Card Details</th>
-              <th>Action</th>
+              <th class="px-3 py-3 text-left">#</th>
+              <th class="px-3 py-3 text-left">Card Details</th>
+              <th class="px-3 py-3 text-center">Action</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Rows dynamically generated here -->
-          </tbody>
         </table>
+        <!-- Scrollable body -->
+        <div class="overflow-y-auto max-h-64">
+          <table class="w-full text-left">
+            <tbody id="ccTableBody" class="text-lg divide-y divide-white/10">
+              <!-- Rows dynamically generated -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div class="flex items-center justify-between">
@@ -187,7 +171,7 @@
   function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
 
   function generate() {
-    const tableBody = document.querySelector("#ccTable tbody");
+    const tableBody = document.querySelector("#ccTableBody");
     tableBody.innerHTML = "";
 
     let pattern = document.getElementById('bin').value.trim();
@@ -235,9 +219,9 @@
     output.forEach((line, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${line}</td>
-        <td class="text-center">
+        <td class="px-3 py-3">${index + 1}</td>
+        <td class="px-3 py-3">${line}</td>
+        <td class="px-3 py-3 text-center">
           <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
             onclick="copySingle('${line}')">Copy</button>
         </td>
@@ -257,7 +241,7 @@
 
   function copyAll() {
     const ccOnly = document.getElementById('ccOnlyToggle').checked;
-    const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
+    const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")]
       .map(td => td.textContent);
     if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
     const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
