@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> <!-- Default is dark mode -->
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,11 +8,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #000;
+            --text-color: #fff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-placeholder-color: rgba(255, 255, 255, 0.4);
+            --table-header-bg: rgba(255, 255, 255, 0.04);
+            --table-row-hover-bg: rgba(255, 255, 255, 0.08);
+            --main-btn-bg: #fff;
+            --main-btn-text: #000;
+            --main-btn-hover-bg: #e0e0e0;
+            --secondary-btn-bg: #fff;
+            --secondary-btn-text: #000;
+            --secondary-btn-hover-bg: #e0e0e0;
+            --toast-bg: #fff;
+            --toast-text: #000;
+        }
+
+        .light-mode {
+            --bg-color: #f5f5f5;
+            --text-color: #000;
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --input-placeholder-color: rgba(0, 0, 0, 0.4);
+            --table-header-bg: rgba(0, 0, 0, 0.04);
+            --table-row-hover-bg: rgba(0, 0, 0, 0.08);
+            --main-btn-bg: #000;
+            --main-btn-text: #fff;
+            --main-btn-hover-bg: #333;
+            --secondary-btn-bg: #000;
+            --secondary-btn-text: #fff;
+            --secondary-btn-hover-bg: #333;
+            --toast-bg: #000;
+            --toast-text: #fff;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a; /* Slightly lighter black */
-            color: #e5e7eb; /* Light gray for better readability */
+            background: var(--bg-color);
+            color: var(--text-color);
             overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         canvas {
@@ -25,235 +65,224 @@
         }
 
         .glass {
-            background: rgba(30, 30, 30, 0.5); /* Darker glass */
+            background: var(--glass-bg) !important;
             backdrop-filter: blur(25px) saturate(150%);
             -webkit-backdrop-filter: blur(25px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border: 1px solid var(--glass-border);
+            transition: background 0.3s ease, border 0.3s ease;
         }
 
         input, select {
-            background: rgba(10, 10, 10, 0.7) !important;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3b82f6; /* Blue focus color */
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+            background: var(--input-bg) !important;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--input-placeholder-color);
         }
 
         thead {
-            background: rgba(255, 255, 255, 0.05) !important;
-        }
-
-        tbody tr {
-            background: transparent;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.3s ease;
-        }
-
-        tbody tr:last-child {
-            border-bottom: none;
+            background: var(--table-header-bg) !important;
         }
 
         tbody tr:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--table-row-hover-bg);
         }
-        
-        /* --- Upgraded Button Style --- */
-        .btn-primary {
-            background-image: linear-gradient(to right, #3b82f6 0%, #8b5cf6 51%, #3b82f6 100%);
-            background-size: 200% auto;
-            color: white;
-            font-weight: bold;
-            border-radius: 0.75rem; /* 12px */
-            padding: 0.75rem 0;
-            width: 100%;
-            text-align: center;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 15px 0 rgba(59, 130, 246, 0.4);
+
+        .btn-main {
+            background-color: var(--main-btn-bg);
+            color: var(--main-btn-text);
         }
-        
-        .btn-primary:hover {
-            background-position: right center; /* change the direction of the change here */
-            transform: scale(1.03);
+        .btn-main:hover {
+             background-color: var(--main-btn-hover-bg);
         }
-        
+
         .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--secondary-btn-bg);
+            color: var(--secondary-btn-text);
+        }
+        .btn-secondary:hover {
+            background-color: var(--secondary-btn-hover-bg);
         }
         
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* --- Upgraded Toggle Switch --- */
-        .toggle-input:checked ~ .toggle-bg {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-
-        .toggle-input:checked ~ .toggle-bg .toggle-dot {
-            transform: translateX(100%);
-            background-color: #ffffff;
-        }
-
         #toast {
             display: flex;
             align-items: center;
             gap: 10px;
             opacity: 0;
             transform: translateY(40px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            background: #27272a;
-            color: #e5e7eb;
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            background: var(--toast-bg);
+            color: var(--toast-text);
+        }
+        .light-mode #toast {
+           box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
-        #toast svg { width: 22px; height: 22px; flex-shrink:0; }
-        #toast.success svg { color: #22c55e; }
-        #toast.error svg { color: #ef4444; }
-        #toast.warn svg { color: #f97316; }
-
+        #toast svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+        /* Other styles from original code */
+        button:hover {
+            transform: scale(1.05);
+        }
+        #ccTableBody td:nth-child(2) {
+            font-family: monospace;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+        @media (max-width: 640px) {
+            #ccTableBody td { font-size: 14px; padding: 6px 4px; }
+            #ccTableBody td:nth-child(2) { font-size: 12px; }
+            thead th { font-size: 12px; padding: 6px 4px; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative">
     <canvas id="particles"></canvas>
+    
+    <!-- THEME TOGGLE BUTTON -->
+    <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none">
+        <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </button>
 
-    <div id="mainCard" class="glass rounded-3xl shadow-2xl p-6 md:p-8 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 opacity-0 translate-y-10">
-        
+    <div id="mainCard" class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 translate-y-10">
         <!-- LEFT SIDE -->
         <div class="flex flex-col justify-between">
             <div>
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">💳 CC Generator</h1>
-                    <p class="text-gray-400 mt-2 text-sm md:text-base">Generate valid credit card numbers for testing purposes.</p>
-                </div>
-
-                <label class="block mb-2 text-sm font-semibold text-gray-300">BIN / Pattern:</label>
-                <input type="text" id="bin" placeholder="e.g., 456789xxxxxx"
-                    class="w-full mb-4 p-3 rounded-xl glass outline-none">
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-300">Month:</label>
-                        <select id="month" class="w-full p-3 rounded-xl glass outline-none">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-6">💳 CC Generator</h1>
+                <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
+                <input type="text" id="bin" placeholder="Enter BIN or pattern" class="w-full mb-4 p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
+                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block mb-2 text-sm font-semibold">Month:</label>
+                        <select id="month" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
                             <option value="random">Random</option>
                             <option>01</option><option>02</option><option>03</option><option>04</option>
                             <option>05</option><option>06</option><option>07</option><option>08</option>
                             <option>09</option><option>10</option><option>11</option><option>12</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-300">Year:</label>
-                        <select id="year" class="w-full p-3 rounded-xl glass outline-none">
+                    <div class="flex-1">
+                        <label class="block mb-2 text-sm font-semibold">Year:</label>
+                        <select id="year" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
                             <option value="random">Random</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-300">CVV2:</label>
-                        <input type="text" id="cvv" placeholder="Random"
-                            class="w-full p-3 rounded-xl glass outline-none">
+                <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label class="block mb-2 text-sm font-semibold">CVV2:</label>
+                        <input type="text" id="cvv" placeholder="Leave blank for random" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
                     </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-semibold text-gray-300">Quantity:</label>
-                        <input type="number" id="qty" value="10" min="1" max="50"
-                            class="w-full p-3 rounded-xl glass outline-none">
+                    <div class="flex-1">
+                        <label class="block mb-2 text-sm font-semibold">Quantity:</label>
+                        <input type="number" id="qty" value="10" min="1" max="50" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
                     </div>
                 </div>
             </div>
-            <button onclick="generate()" class="btn-primary mt-4">Generate Cards</button>
+            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 transition">Generate</button>
         </div>
 
         <!-- RIGHT SIDE -->
-        <div class="flex flex-col">
-            <label class="block mb-2 text-center font-semibold text-gray-300">Generated Cards:</label>
-            <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
-                <div class="overflow-y-auto">
+        <div class="flex flex-col justify-between">
+            <div class="flex flex-col flex-1">
+                <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
+                <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
                     <table class="w-full text-left">
-                        <thead class="text-xs text-gray-400 uppercase sticky top-0">
+                        <thead class="text-xs uppercase sticky top-0">
                             <tr>
-                                <th class="px-4 py-3 font-semibold w-[65%]">Card Details</th>
-                                <th class="px-4 py-3 font-semibold text-center w-[35%]">Action</th>
+                                <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
+                                <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
+                                <th class="px-3 py-3 text-center rounded-tr-lg w-[25%]">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="ccTableBody" class="text-sm divide-y divide-white/5">
-                            <!-- JS will populate this -->
-                             <tr class="text-center">
-                                <td colspan="2" class="p-8 text-gray-500">Click "Generate Cards" to start</td>
-                            </tr>
-                        </tbody>
                     </table>
+                    <div class="overflow-y-auto max-h-64 flex-1">
+                        <table class="w-full text-left">
+                            <tbody id="ccTableBody" class="text-lg divide-y divide-white/10"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-4">
-                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 transition w-full sm:w-auto">COPY ALL</button>
-                
-                <label for="ccOnlyToggle" class="flex items-center cursor-pointer">
-                    <div class="relative">
-                        <input type="checkbox" id="ccOnlyToggle" class="toggle-input sr-only">
-                        <div class="toggle-bg bg-gray-600 border-2 border-gray-500 h-6 w-11 rounded-full transition-colors"></div>
-                        <div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
-                    </div>
-                    <div class="ml-3 text-gray-300 text-sm font-medium">
-                        Copy Card Number Only
-                    </div>
-                </label>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
+                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 transition">COPY ALL</button>
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-xs">Copy CC Only</span>
+                    <label class="relative inline-block w-12 h-6">
+                        <input type="checkbox" id="ccOnlyToggle" class="sr-only peer">
+                        <span class="absolute inset-0 bg-gray-600 rounded-full transition peer-checked:bg-blue-500"></span>
+                        <span class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-6"></span>
+                    </label>
+                </div>
             </div>
         </div>
-
     </div>
-
+    
     <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-semibold">
-        <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
+        <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
         <span id="toastMsg"></span>
     </div>
 
     <script>
+        // --- THEME TOGGLE SCRIPT ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const moonIcon = document.getElementById('theme-icon-moon');
+        const rootEl = document.documentElement;
+
+        // Check for saved theme in localStorage and apply it
+        if (localStorage.getItem('theme') === 'light') {
+            rootEl.classList.add('light-mode');
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            rootEl.classList.toggle('light-mode');
+            const isLight = rootEl.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            
+            sunIcon.classList.toggle('hidden', isLight);
+            moonIcon.classList.toggle('hidden', !isLight);
+        });
+
+
+        // --- ORIGINAL SCRIPT (with minor changes) ---
         window.addEventListener("load", () => {
             gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
         });
 
         const yearSelect = document.getElementById('year');
-        const currentFullYear = new Date().getFullYear();
-        for (let i = 0; i < 15; i++) {
-            const year = (currentFullYear + i).toString().slice(-2);
+        for (let y = 24; y <= 99; y++) {
             const option = document.createElement('option');
-            option.value = year;
-            option.textContent = (currentFullYear + i).toString();
+            option.value = y.toString();
+            option.textContent = (2000 + y).toString();
             yearSelect.appendChild(option);
         }
-        
-        // --- Updated showToast function ---
+
         function showToast(msg, type = "success") {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
             const msgSpan = document.getElementById('toastMsg');
-            
-            toast.className = toast.className.replace(/\bsuccess\b|\berror\b|\bwarn\b/g, '');
-            toast.classList.add(type);
-            
+
             if (type === "success") icon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
             if (type === "error") icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
             if (type === "warn") icon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line>';
-            
+
             msgSpan.innerText = msg;
             gsap.killTweensOf(toast);
-            gsap.fromTo(toast, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" });
-            gsap.to(toast, { opacity: 0, y: 40, delay: 2.5, duration: 0.6, ease: "power2.in" });
+            gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+            gsap.to(toast, { opacity: 0, y: 40, delay: 2, duration: 0.6, ease: "power2.in" });
         }
 
         function randomDigit() { return Math.floor(Math.random() * 10); }
@@ -262,40 +291,27 @@
             let sum = 0, shouldDouble = false;
             for (let i = number.length - 1; i >= 0; i--) {
                 let digit = parseInt(number[i]);
-                if (shouldDouble) { if ((digit *= 2) > 9) digit -= 9; }
-                sum += digit;
-                shouldDouble = !shouldDouble;
+                if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+                sum += digit; shouldDouble = !shouldDouble;
             }
             return sum % 10 === 0;
         }
-        
+
         function generatePattern(pattern, isAmex) {
             let cleanPattern = pattern.replace(/\s|-/g, '');
             let targetLength = isAmex ? 15 : 16;
             if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength);
-            
+
             for (let attempt = 0; attempt < 1000; attempt++) {
                 let candidate = "";
                 for (let ch of cleanPattern) candidate += /[xX#]/.test(ch) ? randomDigit() : ch;
-                
-                if (candidate.length >= targetLength) {
-                     if (isValidLuhn(candidate.substring(0, targetLength))) return candidate.substring(0, targetLength);
-                     continue;
+                if (candidate.length < targetLength) {
+                    while (candidate.length < targetLength - 1) candidate += randomDigit();
+                    for (let d = 0; d <= 9; d++) {
+                        let temp = candidate + d;
+                        if (isValidLuhn(temp)) { candidate = temp; break; }
+                    }
                 }
-
-                while (candidate.length < targetLength - 1) candidate += randomDigit();
-                
-                let checksum = 0;
-                let shouldDouble = true;
-                for (let i = targetLength - 2; i >= 0; i--) {
-                    let digit = parseInt(candidate[i]);
-                    if (shouldDouble) { if ((digit *= 2) > 9) digit -= 9; }
-                    checksum += digit;
-                    shouldDouble = !shouldDouble;
-                }
-                const lastDigit = (10 - (checksum % 10)) % 10;
-                candidate += lastDigit;
-
                 if (candidate.length === targetLength && isValidLuhn(candidate)) return candidate;
             }
             return null;
@@ -314,11 +330,9 @@
             let qty = parseInt(document.getElementById('qty').value);
             let output = [];
 
-            if (pattern.length < 6) { showToast("Pattern must be at least 6 digits!", "error"); return; }
-            if (qty > 50) { qty = 50; document.getElementById('qty').value = 50; showToast("Max quantity is 50!", "warn");}
+            if (pattern.length < 6) { showToast("Pattern must be at least 6 characters!", "error"); return; }
 
-
-            const isAmex = pattern.startsWith("34") || pattern.startsWith("37");
+            const isAmex = pattern.startsWith("3");
             const now = new Date();
             const currentYear = now.getFullYear() % 100;
             const currentMonth = now.getMonth() + 1;
@@ -329,80 +343,62 @@
 
                 let mm, yy;
                 if (year === "random") {
-                    let startYear = currentYear;
-                    yy = Math.floor(Math.random() * 10) + startYear; // Generate year up to 9 years in future
-                    
-                    let startMonth = (yy === currentYear) ? currentMonth : 1;
-                    mm = String(Math.floor(Math.random() * (12 - startMonth + 1) + startMonth)).padStart(2, '0');
+                    yy = Math.floor(Math.random() * 11) + currentYear;
+                    mm = (yy === currentYear)
+                        ? (month === "random"
+                            ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0')
+                            : month)
+                        : (month === "random"
+                            ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0')
+                            : month);
                 } else {
                     yy = year;
-                    let startMonth = (parseInt(yy) === currentYear) ? currentMonth : 1;
                     mm = (month === "random")
-                        ? String(Math.floor(Math.random() * (12 - startMonth + 1) + startMonth)).padStart(2, '0')
+                        ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0')
                         : month;
                 }
 
                 let cvvLength = isAmex ? 4 : 3;
-                let ccv = (cvv === "") ? randomNum(cvvLength) : cvv.padStart(cvvLength, '0');
+                let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
 
                 output.push(`${card}|${mm}|${yy}|${ccv}`);
             }
-            
-            if (output.length === 0) {
-                 showToast("Could not generate cards with this pattern.", "error");
-                 tableBody.innerHTML = `<tr class="text-center"><td colspan="2" class="p-8 text-gray-500">No cards generated. Try a different pattern.</td></tr>`;
-                 return;
-            }
 
             output.forEach((line, index) => {
-                const [card, mm, yy, ccv] = line.split('|');
                 const row = document.createElement("tr");
-                row.className = 'hover:bg-white/5';
                 row.innerHTML = `
-                    <td class="px-4 py-3 font-mono text-base whitespace-nowrap">${card.replace(/(\d{4})/g, '$1 ').trim()} | ${mm}/${yy} | ${ccv}</td>
-                    <td class="px-4 py-3 text-center">
-                        <button class="bg-blue-600 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 transition text-xs font-semibold"
-                            onclick="copySingle(this)">Copy</button>
+                    <td class="px-3 py-3 w-[10%]">${index + 1}</td>
+                    <td class="px-3 py-3 w-[65%]">${line}</td>
+                    <td class="px-3 py-3 text-center w-[25%]">
+                        <button class="btn-secondary px-3 py-1 rounded-md transition"
+                            onclick="copySingle('${line}')">Copy</button>
                     </td>
                 `;
-                row.dataset.line = line;
                 tableBody.appendChild(row);
-                gsap.from(row, { opacity: 0, x: -20, duration: 0.5, delay: index * 0.05, ease: "power2.out" });
+                gsap.from(row, { opacity: 0, y: 20, duration: 0.3, delay: index * 0.05 });
             });
 
-            showToast(`${output.length} Cards Generated!`, "success");
+            showToast("Cards Generated!", "success");
         }
-        
-        // --- Updated copy functions ---
-        function copySingle(btn) {
-            const row = btn.closest('tr');
-            const line = row.dataset.line;
+
+        function copySingle(line) {
             const ccOnly = document.getElementById('ccOnlyToggle').checked;
             const textToCopy = ccOnly ? line.split('|')[0] : line;
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast(ccOnly ? "Card number copied!" : "Full data copied!", "success");
-                btn.textContent = 'Copied!';
-                gsap.to(btn, {backgroundColor: '#16a34a', duration: 0.3});
-                setTimeout(() => {
-                    btn.textContent = 'Copy';
-                     gsap.to(btn, {backgroundColor: '#2563eb', duration: 0.3});
-                }, 1500);
-            });
+            navigator.clipboard.writeText(textToCopy);
+            showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success");
         }
 
         function copyAll() {
             const ccOnly = document.getElementById('ccOnlyToggle').checked;
-            const lines = [...document.querySelectorAll("#ccTableBody tr")]
-                .map(row => row.dataset.line);
-            if (lines.length === 0 || !lines[0]) { showToast("Nothing to copy!", "warn"); return; }
-            
+            const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")]
+                .map(td => td.textContent);
+            if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; }
             const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
             navigator.clipboard.writeText(textToCopy);
-            showToast(ccOnly ? "All card numbers copied!" : "All data copied!", "success");
+            showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success");
         }
 
-        // Particle background
+        // --- PARTICLE BACKGROUND SCRIPT (MODIFIED FOR THEME) ---
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -410,28 +406,30 @@
         window.addEventListener('resize', resizeCanvas); resizeCanvas();
         function createParticles() {
             particles = [];
-            let particleCount = Math.floor(canvas.width * canvas.height / 25000);
-            for (let i = 0; i < particleCount; i++) {
+            for (let i = 0; i < 50; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.5 + 0.5,
-                    dx: (Math.random() - 0.5) * 0.3,
-                    dy: (Math.random() - 0.5) * 0.3
+                    radius: Math.random() * 2 + 1,
+                    dx: (Math.random() - 0.5) * 0.5,
+                    dy: (Math.random() - 0.5) * 0.5
                 });
             }
         }
         createParticles();
+
         function drawParticles() {
-            if(canvas.width === 0) resizeCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Check current theme and set particle color
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+
             particles.forEach(p => {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                 ctx.fill();
-                p.x += p.dx;
-                p.y += p.dy;
+                p.x += p.dx; p.y += p.dy;
                 if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
                 if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
             });
