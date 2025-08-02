@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Final Gap Fix</title>
+  <title>CC Generator - Perfect Alignment + Box</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -27,15 +27,15 @@
     <!-- LEFT SIDE -->
     <div class="flex flex-col justify-between">
       <div>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-cyan-400 mb-8">💳 CC Generator</h1>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-cyan-400 mb-6">💳 CC Generator</h1>
 
-        <label class="block mb-3 text-sm font-semibold">BIN / Pattern:</label>
+        <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
         <input type="text" id="bin" placeholder="Enter BIN or pattern (x/# placeholders)" 
-          class="w-full mb-6 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+          class="w-full mb-4 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
 
-        <div class="flex gap-4 mb-6">
+        <div class="flex gap-4 mb-4">
           <div class="flex-1">
-            <label class="block mb-3 text-sm font-semibold">Month:</label>
+            <label class="block mb-2 text-sm font-semibold">Month:</label>
             <select id="month" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
               <option value="random">Random</option>
               <option>01</option><option>02</option><option>03</option><option>04</option>
@@ -44,21 +44,21 @@
             </select>
           </div>
           <div class="flex-1">
-            <label class="block mb-3 text-sm font-semibold">Year:</label>
+            <label class="block mb-2 text-sm font-semibold">Year:</label>
             <select id="year" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
               <option value="random">Random</option>
             </select>
           </div>
         </div>
 
-        <div class="flex gap-4 mb-8">
+        <div class="flex gap-4 mb-4">
           <div class="flex-1">
-            <label class="block mb-3 text-sm font-semibold">CVV2:</label>
+            <label class="block mb-2 text-sm font-semibold">CVV2:</label>
             <input type="text" id="cvv" placeholder="Leave blank for random" 
               class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
           </div>
           <div class="flex-1">
-            <label class="block mb-3 text-sm font-semibold">Quantity:</label>
+            <label class="block mb-2 text-sm font-semibold">Quantity:</label>
             <input type="number" id="qty" value="10" min="1" max="50" 
               class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
           </div>
@@ -73,7 +73,7 @@
     <!-- RIGHT SIDE -->
     <div class="flex flex-col justify-between">
       <div class="flex flex-col flex-1">
-        <label class="block mb-3 text-center font-semibold text-sm">Generated CC:</label>
+        <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
 
         <div class="rounded-lg bg-white/20 flex-1 flex flex-col">
           <!-- Header -->
