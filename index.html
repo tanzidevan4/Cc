@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CC Generator - Ultra Glassified</title>
+    <title>CC Generator - Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -21,11 +21,13 @@
             --main-btn-bg: #fff;
             --main-btn-text: #000;
             --main-btn-hover-bg: #e0e0e0;
-            --secondary-btn-bg: #fff;
-            --secondary-btn-text: #000;
-            --secondary-btn-hover-bg: #e0e0e0;
+            --copy-btn-bg: #fff;
+            --copy-btn-text: #000;
+            --copy-btn-hover-bg: #e0e0e0;
             --toast-bg: #fff;
             --toast-text: #000;
+            --toggle-bg: #4b5563; /* gray-600 */
+            --toggle-checked-bg: #06b6d4; /* cyan-500 */
         }
 
         .light-mode {
@@ -40,11 +42,12 @@
             --main-btn-bg: #000;
             --main-btn-text: #fff;
             --main-btn-hover-bg: #333;
-            --secondary-btn-bg: #000;
-            --secondary-btn-text: #fff;
-            --secondary-btn-hover-bg: #333;
+            --copy-btn-bg: #000;
+            --copy-btn-text: #fff;
+            --copy-btn-hover-bg: #333;
             --toast-bg: #000;
             --toast-text: #fff;
+            --toggle-bg: #d1d5db; /* gray-300 */
         }
 
         body {
@@ -56,12 +59,7 @@
         }
 
         canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
         }
 
         .glass {
@@ -78,61 +76,30 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
 
-        input::placeholder {
-            color: var(--input-placeholder-color);
-        }
+        input::placeholder { color: var(--input-placeholder-color); }
+        thead { background: var(--table-header-bg) !important; }
+        tbody tr:hover { background: var(--table-row-hover-bg); }
 
-        thead {
-            background: var(--table-header-bg) !important;
-        }
-
-        tbody tr:hover {
-            background: var(--table-row-hover-bg);
-        }
-
-        .btn-main {
-            background-color: var(--main-btn-bg);
-            color: var(--main-btn-text);
-        }
-        .btn-main:hover {
-             background-color: var(--main-btn-hover-bg);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-btn-bg);
-            color: var(--secondary-btn-text);
-        }
-        .btn-secondary:hover {
-            background-color: var(--secondary-btn-hover-bg);
-        }
+        .btn-main { background-color: var(--main-btn-bg); color: var(--main-btn-text); }
+        .btn-main:hover { background-color: var(--main-btn-hover-bg); }
+        .btn-copy { background-color: var(--copy-btn-bg); color: var(--copy-btn-text); }
+        .btn-copy:hover { background-color: var(--copy-btn-hover-bg); }
         
         #toast {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            transform: translateY(40px);
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            background: var(--toast-bg);
-            color: var(--toast-text);
+            display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(40px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3); background: var(--toast-bg); color: var(--toast-text);
         }
-        .light-mode #toast {
-           box-shadow: 0 0 20px rgba(0,0,0,0.2);
-        }
+        .light-mode #toast { box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+        #toast svg { width: 22px; height: 22px; flex-shrink: 0; }
 
-        #toast svg {
-            width: 22px;
-            height: 22px;
-            flex-shrink: 0;
-        }
-        /* Other styles from original code */
-        button:hover {
-            transform: scale(1.05);
-        }
+        /* --- FIXED: Toggle Switch CSS from Base Script --- */
+        .toggle-bg { background-color: var(--toggle-bg); }
+        .toggle-input:checked + .toggle-bg { background-color: var(--toggle-checked-bg); }
+        .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
+
+        /* Font styles for table from base script */
         #ccTableBody td:nth-child(2) {
-            font-family: monospace;
-            white-space: nowrap;
-            font-size: 18px;
+            font-family: monospace; white-space: nowrap; font-size: 18px;
         }
         @media (max-width: 640px) {
             #ccTableBody td { font-size: 14px; padding: 6px 4px; }
@@ -144,7 +111,6 @@
 <body class="min-h-screen flex items-center justify-center p-4 relative">
     <canvas id="particles"></canvas>
     
-    <!-- THEME TOGGLE BUTTON -->
     <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none">
         <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -189,7 +155,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 transition">Generate</button>
+            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 transition transform hover:scale-105">Generate</button>
         </div>
 
         <!-- RIGHT SIDE -->
@@ -208,26 +174,30 @@
                     </table>
                     <div class="overflow-y-auto max-h-64 flex-1">
                         <table class="w-full text-left">
-                            <tbody id="ccTableBody" class="text-lg divide-y divide-white/10"></tbody>
+                             <!-- FIXED: Removed divide-y class that caused horizontal lines -->
+                            <tbody id="ccTableBody" class="text-lg"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
-                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 transition">COPY ALL</button>
+                <button onclick="copyAll()" class="btn-copy font-bold rounded-xl py-3 px-6 transition transform hover:scale-105">COPY ALL</button>
+                
+                <!-- FIXED: Toggle switch HTML from Base Script for better compatibility -->
                 <div class="flex items-center justify-center gap-2">
-                    <span class="text-xs">Copy CC Only</span>
-                    <label class="relative inline-block w-12 h-6">
-                        <input type="checkbox" id="ccOnlyToggle" class="sr-only peer">
-                        <span class="absolute inset-0 bg-gray-600 rounded-full transition peer-checked:bg-blue-500"></span>
-                        <span class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-6"></span>
-                    </label>
+                  <span class="text-xs">Copy CC Only</span>
+                  <label class="relative inline-block w-12 h-6">
+                    <input type="checkbox" id="ccOnlyToggle" class="toggle-input hidden" />
+                    <span class="toggle-bg absolute inset-0 rounded-full transition">
+                      <span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
+                    </span>
+                  </label>
                 </div>
+
             </div>
         </div>
     </div>
     
-    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
         <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
         <span id="toastMsg"></span>
@@ -240,7 +210,6 @@
         const moonIcon = document.getElementById('theme-icon-moon');
         const rootEl = document.documentElement;
 
-        // Check for saved theme in localStorage and apply it
         if (localStorage.getItem('theme') === 'light') {
             rootEl.classList.add('light-mode');
             sunIcon.classList.add('hidden');
@@ -251,13 +220,11 @@
             rootEl.classList.toggle('light-mode');
             const isLight = rootEl.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            
             sunIcon.classList.toggle('hidden', isLight);
             moonIcon.classList.toggle('hidden', !isLight);
         });
 
-
-        // --- ORIGINAL SCRIPT (with minor changes) ---
+        // --- ORIGINAL SCRIPT LOGIC ---
         window.addEventListener("load", () => {
             gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
         });
@@ -274,11 +241,9 @@
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
             const msgSpan = document.getElementById('toastMsg');
-
-            if (type === "success") icon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
-            if (type === "error") icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
-            if (type === "warn") icon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line>';
-
+            if (type === "success") icon.innerHTML = '✅ ';
+            if (type === "error") icon.innerHTML = '❌ ';
+            if (type === "warn") icon.innerHTML = '⚠️ ';
             msgSpan.innerText = msg;
             gsap.killTweensOf(toast);
             gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
@@ -340,27 +305,18 @@
             for (let i = 0; i < qty; i++) {
                 let card = generatePattern(pattern, isAmex);
                 if (!card) continue;
-
                 let mm, yy;
                 if (year === "random") {
                     yy = Math.floor(Math.random() * 11) + currentYear;
                     mm = (yy === currentYear)
-                        ? (month === "random"
-                            ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0')
-                            : month)
-                        : (month === "random"
-                            ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0')
-                            : month);
+                        ? (month === "random" ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') : month)
+                        : (month === "random" ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month);
                 } else {
                     yy = year;
-                    mm = (month === "random")
-                        ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0')
-                        : month;
+                    mm = (month === "random") ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month;
                 }
-
                 let cvvLength = isAmex ? 4 : 3;
                 let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
-
                 output.push(`${card}|${mm}|${yy}|${ccv}`);
             }
 
@@ -370,14 +326,12 @@
                     <td class="px-3 py-3 w-[10%]">${index + 1}</td>
                     <td class="px-3 py-3 w-[65%]">${line}</td>
                     <td class="px-3 py-3 text-center w-[25%]">
-                        <button class="btn-secondary px-3 py-1 rounded-md transition"
-                            onclick="copySingle('${line}')">Copy</button>
+                        <button class="btn-copy px-3 py-1 rounded-md transition transform hover:scale-105" onclick="copySingle('${line}')">Copy</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
                 gsap.from(row, { opacity: 0, y: 20, duration: 0.3, delay: index * 0.05 });
             });
-
             showToast("Cards Generated!", "success");
         }
 
@@ -390,8 +344,7 @@
 
         function copyAll() {
             const ccOnly = document.getElementById('ccOnlyToggle').checked;
-            const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")]
-                .map(td => td.textContent);
+            const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")].map(td => td.textContent);
             if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; }
             const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
             navigator.clipboard.writeText(textToCopy);
@@ -407,24 +360,15 @@
         function createParticles() {
             particles = [];
             for (let i = 0; i < 50; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2 + 1,
-                    dx: (Math.random() - 0.5) * 0.5,
-                    dy: (Math.random() - 0.5) * 0.5
-                });
+                particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2 + 1, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 });
             }
         }
         createParticles();
 
         function drawParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Check current theme and set particle color
             const isLightMode = document.documentElement.classList.contains('light-mode');
             ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
-
             particles.forEach(p => {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
