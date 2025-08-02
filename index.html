@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Final Alignment Fix 2</title>
+  <title>CC Generator - Perfect Alignment</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -20,89 +20,88 @@
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
 
-  <!-- Particles Background -->
   <canvas id="particles"></canvas>
 
   <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 md:p-10 w-[95%] max-w-5xl text-white grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
     
-    <!-- LEFT SIDE - FORM -->
-    <div class="flex flex-col">
-      <h1 class="text-3xl md:text-4xl font-extrabold text-center text-cyan-400 mb-6">💳 CC Generator</h1>
+    <!-- LEFT SIDE -->
+    <div class="flex flex-col h-full justify-between">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-cyan-400 mb-6">💳 CC Generator</h1>
 
-      <!-- BIN -->
-      <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
-      <input type="text" id="bin" placeholder="Enter BIN or pattern (x/# placeholders)" 
-        class="w-full mb-4 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+        <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
+        <input type="text" id="bin" placeholder="Enter BIN or pattern (x/# placeholders)" 
+          class="w-full mb-4 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
 
-      <!-- Month + Year -->
-      <div class="flex gap-4 mb-4">
-        <div class="flex-1">
-          <label class="block mb-2 text-sm font-semibold">Month:</label>
-          <select id="month" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
-            <option value="random">Random</option>
-            <option>01</option><option>02</option><option>03</option><option>04</option>
-            <option>05</option><option>06</option><option>07</option><option>08</option>
-            <option>09</option><option>10</option><option>11</option><option>12</option>
-          </select>
+        <div class="flex gap-4 mb-4">
+          <div class="flex-1">
+            <label class="block mb-2 text-sm font-semibold">Month:</label>
+            <select id="month" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+              <option value="random">Random</option>
+              <option>01</option><option>02</option><option>03</option><option>04</option>
+              <option>05</option><option>06</option><option>07</option><option>08</option>
+              <option>09</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block mb-2 text-sm font-semibold">Year:</label>
+            <select id="year" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+              <option value="random">Random</option>
+            </select>
+          </div>
         </div>
-        <div class="flex-1">
-          <label class="block mb-2 text-sm font-semibold">Year:</label>
-          <select id="year" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
-            <option value="random">Random</option>
-          </select>
+
+        <div class="flex gap-4 mb-4">
+          <div class="flex-1">
+            <label class="block mb-2 text-sm font-semibold">CVV2:</label>
+            <input type="text" id="cvv" placeholder="Leave blank for random" 
+              class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
+          <div class="flex-1">
+            <label class="block mb-2 text-sm font-semibold">Quantity:</label>
+            <input type="number" id="qty" value="10" min="1" max="50" 
+              class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+          </div>
         </div>
       </div>
 
-      <!-- CVV + Quantity -->
-      <div class="flex gap-4 mb-4">
-        <div class="flex-1">
-          <label class="block mb-2 text-sm font-semibold">CVV2:</label>
-          <input type="text" id="cvv" placeholder="Leave blank for random" 
-            class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
-        </div>
-        <div class="flex-1">
-          <label class="block mb-2 text-sm font-semibold">Quantity:</label>
-          <input type="number" id="qty" value="10" min="1" max="50" 
-            class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
-        </div>
-      </div>
-
-      <!-- Generate Button -->
+      <!-- Bottom button left -->
       <button onclick="generate()" 
         class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
     </div>
 
-    <!-- RIGHT SIDE - OUTPUT TABLE -->
-    <div class="flex flex-col mt-[2.9rem]">
-      <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
+    <!-- RIGHT SIDE -->
+    <div class="flex flex-col h-full justify-between">
+      <div>
+        <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
 
-      <!-- Header + Scrollable Body -->
-      <div class="rounded-lg bg-white/20 mb-4 flex-1 overflow-hidden">
-        <!-- Header -->
-        <table class="w-full text-left">
-          <thead class="bg-slate-800 text-xs uppercase sticky top-0">
-            <tr>
-              <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
-              <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
-              <th class="px-3 py-3 text-center rounded-tr-lg w-[25%]">Action</th>
-            </tr>
-          </thead>
-        </table>
-        <!-- Scrollable body -->
-        <div class="overflow-y-auto max-h-64">
+        <div class="rounded-lg bg-white/20 mb-4 flex-1 overflow-hidden">
+          <!-- Header -->
           <table class="w-full text-left">
-            <tbody id="ccTableBody" class="text-lg divide-y divide-white/10">
-              <!-- Rows dynamically generated -->
-            </tbody>
+            <thead class="bg-slate-800 text-xs uppercase sticky top-0">
+              <tr>
+                <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
+                <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
+                <th class="px-3 py-3 text-center rounded-tr-lg w-[25%]">Action</th>
+              </tr>
+            </thead>
           </table>
+          <!-- Scrollable body -->
+          <div class="overflow-y-auto max-h-64">
+            <table class="w-full text-left">
+              <tbody id="ccTableBody" class="text-lg divide-y divide-white/10">
+                <!-- Rows dynamically generated -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
+      <!-- Bottom button right -->
       <div class="flex items-center justify-between">
         <button onclick="copyAll()" 
           class="bg-green-400 text-black font-bold rounded-lg py-3 px-6 hover:bg-green-300 transition">COPY ALL</button>
         
-        <!-- TOGGLE COPY CC ONLY -->
         <div class="flex items-center gap-2">
           <span class="text-xs">Copy CC Only</span>
           <label class="relative inline-block w-12 h-6">
@@ -250,7 +249,6 @@
   }
 </script>
 
-<!-- Particles Animation -->
 <script>
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
