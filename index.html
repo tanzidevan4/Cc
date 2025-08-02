@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Final Compact UI</title>
+  <title>CC Generator - Final UI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -68,7 +68,7 @@
       </div>
 
       <!-- Generate Button -->
-      <button id="generateBtn"
+      <button onclick="generate()" 
         class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
     </div>
 
@@ -81,19 +81,19 @@
         <table class="w-full text-left" id="ccTable">
           <thead class="bg-white/10 text-xs uppercase">
             <tr>
-              <th class="px-3 py-2 w-10">#</th>
-              <th class="px-3 py-2 w-[75%]">Card Details</th>
-              <th class="px-3 py-2 text-center w-20">Action</th>
+              <th class="px-3 py-2 sticky top-0 bg-slate-800">#</th>
+              <th class="px-3 py-2 sticky top-0 bg-slate-800">Card Details</th>
+              <th class="px-3 py-2 text-center sticky top-0 bg-slate-800">Action</th>
             </tr>
           </thead>
-          <tbody class="text-lg divide-y divide-white/10">
+          <tbody class="text-sm divide-y divide-white/10">
             <!-- Rows dynamically generated here -->
           </tbody>
         </table>
       </div>
 
       <div class="flex items-center justify-between">
-        <button id="copyAllBtn"
+        <button onclick="copyAll()" 
           class="bg-green-400 text-black font-bold rounded-lg py-3 px-6 hover:bg-green-300 transition">COPY ALL</button>
         
         <!-- TOGGLE COPY CC ONLY -->
@@ -122,9 +122,6 @@
     option.textContent = y.toString();
     yearSelect.appendChild(option);
   }
-
-  const tableBody = document.querySelector("#ccTable tbody");
-  const ccOnlyToggle = document.getElementById("ccOnlyToggle");
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
@@ -167,7 +164,8 @@
 
   function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
 
-  function generateCards() {
+  function generate() {
+    const tableBody = document.querySelector("#ccTable tbody");
     tableBody.innerHTML = "";
 
     let pattern = document.getElementById('bin').value.trim();
@@ -211,31 +209,17 @@
       output.push(`${card}|${mm}|${yy}|${ccv}`);
     }
 
-    // Add rows to table with event listeners
+    // Add rows to table
     output.forEach((line, index) => {
       const row = document.createElement("tr");
-
-      const tdIndex = document.createElement("td");
-      tdIndex.className = "px-3 py-2";
-      tdIndex.textContent = index + 1;
-
-      const tdCard = document.createElement("td");
-      tdCard.className = "px-3 py-2 font-mono";
-      tdCard.textContent = line;
-
-      const tdAction = document.createElement("td");
-      tdAction.className = "px-3 py-2 text-center";
-
-      const btnCopy = document.createElement("button");
-      btnCopy.className = "bg-cyan-400 text-black px-3 py-1 text-sm rounded-md hover:bg-cyan-300 transition";
-      btnCopy.textContent = "Copy";
-      btnCopy.addEventListener("click", () => copySingle(line));
-
-      tdAction.appendChild(btnCopy);
-      row.appendChild(tdIndex);
-      row.appendChild(tdCard);
-      row.appendChild(tdAction);
-
+      row.innerHTML = `
+        <td class="px-3 py-2">${index + 1}</td>
+        <td class="px-3 py-2">${line}</td>
+        <td class="px-3 py-2 text-center">
+          <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
+            onclick="copySingle('${line}')">Copy</button>
+        </td>
+      `;
       tableBody.appendChild(row);
     });
 
@@ -243,23 +227,21 @@
   }
 
   function copySingle(line) {
-    const textToCopy = ccOnlyToggle.checked ? line.split('|')[0] : line;
+    const ccOnly = document.getElementById('ccOnlyToggle').checked;
+    const textToCopy = ccOnly ? line.split('|')[0] : line;
     navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnlyToggle.checked ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
+    showToast(ccOnly ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
   }
 
   function copyAll() {
+    const ccOnly = document.getElementById('ccOnlyToggle').checked;
     const lines = [...document.querySelectorAll("#ccTable tbody tr td:nth-child(2)")]
       .map(td => td.textContent);
     if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
-    const textToCopy = ccOnlyToggle.checked ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
+    const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
     navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnlyToggle.checked ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
+    showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
   }
-
-  // Event listeners
-  document.getElementById("generateBtn").addEventListener("click", generateCards);
-  document.getElementById("copyAllBtn").addEventListener("click", copyAll);
 </script>
 
 <!-- Particles Animation -->
