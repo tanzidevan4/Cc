@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Auto Adjust Version</title>
+  <title>CC Generator - Monospace Fixed Version</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
@@ -17,6 +17,12 @@
     ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
 
+    /* Card details column fixed width font */
+    #ccTableBody td:nth-child(2) {
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
     /* Small screen font & padding adjust */
     @media (max-width: 640px) {
       #ccTableBody td {
@@ -26,6 +32,7 @@
       #ccTableBody td:nth-child(2) {
         word-break: break-all;
         font-size: 11px;
+        font-family: monospace; /* ছোট screen এও monospaced */
       }
       thead th {
         font-size: 10px;
@@ -241,7 +248,7 @@
       tableBody.appendChild(row);
     });
 
-    adjustFontSize(); // Font size adjust call
+    adjustFontSize();
     showToast("✅ Cards Generated!");
   }
 
