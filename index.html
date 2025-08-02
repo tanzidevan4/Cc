@@ -3,63 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Final (No Break + Auto Fit)</title>
+  <title>CC Generator - Premium</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #000;
+      color: #fff;
+    }
     canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    .toggle-input:checked + .toggle-bg { background-color: #06b6d4; }
-    .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
 
-    /* Scrollbar styling */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
+    /* Glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-    /* Card details column fixed width font */
+    /* Animation */
+    .fade-in {
+      animation: fadeIn 1s ease-in-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* Hover animations */
+    input, select, button {
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Table text */
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
       letter-spacing: 0.5px;
-      white-space: nowrap;    /* লাইন ব্রেক করবে না */
-      font-size: 18px;        /* বড় screen এ বড় font */
+      white-space: nowrap;
+      font-size: 18px;
     }
 
-    /* Small screen font adjust only */
+    /* Small screen adjust */
     @media (max-width: 640px) {
-      #ccTableBody td {
-        font-size: 14px;
-        padding: 6px 4px;
-      }
-      #ccTableBody td:nth-child(2) {
-        font-size: 12px;        /* ছোট screen এ ছোট font */
-      }
-      thead th {
-        font-size: 12px;
-        padding: 6px 4px;
-      }
+      #ccTableBody td { font-size: 14px; padding: 6px 4px; }
+      #ccTableBody td:nth-child(2) { font-size: 12px; }
+      thead th { font-size: 12px; padding: 6px 4px; }
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center p-2">
+<body class="min-h-screen flex items-center justify-center p-4 relative">
 
   <canvas id="particles"></canvas>
 
-  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-4 md:p-8 w-full max-w-6xl text-white grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+  <div class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
     
     <!-- LEFT SIDE -->
     <div class="flex flex-col justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-center text-cyan-400 mb-6">💳 CC Generator</h1>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-6">💳 CC Generator</h1>
 
         <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
-        <input type="text" id="bin" placeholder="Enter BIN or pattern (x/# placeholders)" 
-          class="w-full mb-4 p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+        <input type="text" id="bin" placeholder="Enter BIN or pattern" 
+          class="w-full mb-4 p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white">
 
         <div class="flex flex-col sm:flex-row gap-4 mb-4">
           <div class="flex-1">
             <label class="block mb-2 text-sm font-semibold">Month:</label>
-            <select id="month" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+            <select id="month" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white">
               <option value="random">Random</option>
               <option>01</option><option>02</option><option>03</option><option>04</option>
               <option>05</option><option>06</option><option>07</option><option>08</option>
@@ -68,7 +86,7 @@
           </div>
           <div class="flex-1">
             <label class="block mb-2 text-sm font-semibold">Year:</label>
-            <select id="year" class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+            <select id="year" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white">
               <option value="random">Random</option>
             </select>
           </div>
@@ -78,19 +96,18 @@
           <div class="flex-1">
             <label class="block mb-2 text-sm font-semibold">CVV2:</label>
             <input type="text" id="cvv" placeholder="Leave blank for random" 
-              class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+              class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white">
           </div>
           <div class="flex-1">
             <label class="block mb-2 text-sm font-semibold">Quantity:</label>
             <input type="number" id="qty" value="10" min="1" max="50" 
-              class="w-full p-3 rounded-lg bg-white/20 outline-none focus:ring-2 focus:ring-cyan-400">
+              class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white">
           </div>
         </div>
       </div>
 
-      <!-- Bottom button left -->
       <button onclick="generate()" 
-        class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
+        class="w-full bg-white text-black font-bold rounded-xl py-3 hover:bg-gray-200 transition">Generate</button>
     </div>
 
     <!-- RIGHT SIDE -->
@@ -98,10 +115,10 @@
       <div class="flex flex-col flex-1">
         <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
 
-        <div class="rounded-lg bg-white/20 flex-1 flex flex-col overflow-hidden">
+        <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
           <!-- Header -->
           <table class="w-full text-left">
-            <thead class="bg-slate-800 text-xs uppercase sticky top-0">
+            <thead class="bg-black/50 text-xs uppercase sticky top-0">
               <tr>
                 <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
                 <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
@@ -120,16 +137,15 @@
         </div>
       </div>
 
-      <!-- Bottom button right -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
         <button onclick="copyAll()" 
-          class="bg-green-400 text-black font-bold rounded-lg py-3 px-6 hover:bg-green-300 transition">COPY ALL</button>
+          class="bg-white text-black font-bold rounded-xl py-3 px-6 hover:bg-gray-200 transition">COPY ALL</button>
         
         <div class="flex items-center justify-center gap-2">
           <span class="text-xs">Copy CC Only</span>
           <label class="relative inline-block w-12 h-6">
             <input type="checkbox" id="ccOnlyToggle" class="toggle-input hidden" />
-            <span class="toggle-bg absolute inset-0 bg-gray-500 rounded-full transition">
+            <span class="absolute inset-0 glass rounded-full transition">
               <span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
             </span>
           </label>
@@ -139,8 +155,9 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="hidden fixed bottom-6 bg-cyan-500 text-black px-6 py-3 rounded-lg shadow-lg font-bold"></div>
+  <div id="toast" class="hidden fixed bottom-6 bg-white text-black px-6 py-3 rounded-xl shadow-lg font-bold"></div>
 
+<!-- Functionality Scripts (same as original) -->
 <script>
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
@@ -241,7 +258,7 @@
         <td class="px-3 py-3 w-[10%]">${index + 1}</td>
         <td class="px-3 py-3 w-[65%]">${line}</td>
         <td class="px-3 py-3 text-center w-[25%]">
-          <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
+          <button class="bg-white text-black px-3 py-1 rounded-md hover:bg-gray-200 transition"
             onclick="copySingle('${line}')">Copy</button>
         </td>
       `;
@@ -269,7 +286,6 @@
     showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
   }
 
-  // Font size adjust function for generated rows
   function adjustFontSize() {
     const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
     rows.forEach(cell => {
@@ -284,6 +300,7 @@
 </script>
 
 <script>
+  // Particle background
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let particles = [];
