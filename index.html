@@ -12,8 +12,7 @@
         :root {
             --bg-color: #000;
             --text-color: #fff;
-            /* --- MODIFIED: Changed glass to a dark transparent for better contrast with particles --- */
-            --glass-bg: rgba(0, 0, 0, 0.15); 
+            --glass-bg: rgba(20, 20, 20, 0.2);
             --glass-border: rgba(255, 255, 255, 0.12);
             --input-bg: rgba(255, 255, 255, 0.05);
             --input-placeholder-color: rgba(255, 255, 255, 0.4);
@@ -31,15 +30,15 @@
             --toggle-on-bg: #ffffff;
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #000000;
-            --particle-color: 'rgba(255,255,255,0.7)';
-            /* --- MODIFIED: Made lines slightly more visible --- */
-            --line-color: 'rgba(255,255,255,0.2)';
+            /* --- FIXED: Removed quotes from color values --- */
+            --particle-color: rgba(255,255,255,0.7);
+            --line-color: rgba(255,255,255,0.15);
         }
 
         .light-mode {
             --bg-color: #f5f5f5;
             --text-color: #000;
-            --glass-bg: rgba(255, 255, 255, 0.35);
+            --glass-bg: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(0, 0, 0, 0.1);
             --input-bg: rgba(0, 0, 0, 0.05);
             --input-placeholder-color: rgba(0, 0, 0, 0.4);
@@ -57,9 +56,9 @@
             --toggle-on-bg: #000000;
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #ffffff;
-            --particle-color: 'rgba(0,0,0,0.7)';
-            /* --- MODIFIED: Made lines slightly more visible --- */
-            --line-color: 'rgba(0,0,0,0.15)';
+            /* --- FIXED: Removed quotes from color values --- */
+            --particle-color: rgba(0,0,0,0.7);
+            --line-color: rgba(0,0,0,0.1);
         }
 
         body {
@@ -82,8 +81,8 @@
         .glass {
             background: var(--glass-bg) !important;
             /* --- MODIFIED: Reduced blur for more clarity --- */
-            backdrop-filter: blur(8px) saturate(180%);
-            -webkit-backdrop-filter: blur(8px) saturate(180%);
+            backdrop-filter: blur(6px) saturate(150%);
+            -webkit-backdrop-filter: blur(6px) saturate(150%);
             border: 1px solid var(--glass-border);
             transition: background 0.3s ease, border 0.3s ease, backdrop-filter 0.3s ease;
         }
@@ -271,7 +270,6 @@
     </div>
 
     <script>
-        // --- ALL PREVIOUS SCRIPTS (THEME, FORM SAVE/LOAD, GENERATOR LOGIC) ---
         // --- THEME TOGGLE SCRIPT ---
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('theme-icon-sun');
@@ -288,7 +286,9 @@
             rootEl.classList.toggle('light-mode');
             const isLight = rootEl.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            if (animationFrameId) cancelAnimationFrame(animationFrameId); // Stop old animation
             init(); // Re-initialize particles with new theme colors
+            animate(); // Start new animation
         });
 
         // --- FORM DATA SAVE/LOAD SCRIPT ---
@@ -470,14 +470,12 @@
         let particleArray;
         let animationFrameId;
 
-        const mouse = { x: null, y: null };
-        window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
-
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
             init();
             animate();
         }
@@ -506,9 +504,12 @@
             particleArray = [];
             let numParticles = (canvas.width * canvas.height) / 9000;
             if (numParticles > 150) numParticles = 150;
-            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim();
+            
+            const styles = getComputedStyle(document.documentElement);
+            const particleColor = styles.getPropertyValue('--particle-color').trim();
+            
             for (let i = 0; i < numParticles; i++) {
-                let size = (Math.random() * 2.5) + 1;
+                let size = (Math.random() * 2) + 1;
                 let x = Math.random() * (innerWidth - size * 2) + size * 2;
                 let y = Math.random() * (innerHeight - size * 2) + size * 2;
                 let dirX = (Math.random() * 0.4) - 0.2;
@@ -524,9 +525,9 @@
                     let dx = particleArray[a].x - particleArray[b].x;
                     let dy = particleArray[a].y - particleArray[b].y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) { // Increased connection distance
+                    if (distance < 120) {
                         const opacity = 1 - (distance / 120);
-                        ctx.strokeStyle = `rgba(${lineColorValue.match(/\d+/g).join(',')}, ${opacity})`;
+                        ctx.strokeStyle = lineColorValue.replace(/[\d\.]+\)$/g, `${opacity})`);
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particleArray[a].x, particleArray[a].y);
