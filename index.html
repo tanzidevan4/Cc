@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Ultra Glass Premium</title>
+  <title>CC Generator - Glass Clear</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -11,20 +11,28 @@
     body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
     canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
 
-    /* Glassmorphism base */
+    /* FULL CLEAR GLASS EFFECT */
     .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02); /* ultra transparent */
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* Toggle animation fix */
+    /* Toggle Switch */
+    .toggle-input:checked + span {
+      background: rgba(255, 255, 255, 0.2);
+    }
     .toggle-input:checked + span .toggle-dot {
       transform: translateX(1.5rem);
+      background: #00ffcc; /* on state color */
+      box-shadow: 0 0 10px #00ffcc;
+    }
+    .toggle-dot {
+      transition: all 0.3s ease;
     }
 
-    /* Toast style + glow */
+    /* Toast style */
     #toast {
       display: flex;
       align-items: center;
@@ -41,7 +49,7 @@
     }
     button:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,0.3); }
     table tbody tr { transition: background 0.3s, transform 0.3s; }
-    table tbody tr:hover { background: rgba(255,255,255,0.05); transform: scale(1.01); }
+    table tbody tr:hover { background: rgba(255,255,255,0.08); transform: scale(1.01); }
 
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
@@ -115,7 +123,7 @@
 
         <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
           <table class="w-full text-left">
-            <thead class="bg-black/40 text-xs uppercase sticky top-0">
+            <thead class="bg-black/30 text-xs uppercase sticky top-0">
               <tr>
                 <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
                 <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
@@ -140,7 +148,7 @@
           <label class="relative inline-block w-12 h-6">
             <input type="checkbox" id="ccOnlyToggle" class="toggle-input hidden" />
             <span class="absolute inset-0 glass rounded-full transition">
-              <span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
+              <span class="toggle-dot absolute left-1 top-1 bg-gray-300 w-4 h-4 rounded-full"></span>
             </span>
           </label>
         </div>
@@ -155,12 +163,12 @@
   </div>
 
 <script>
-  // GSAP load animation
+  // GSAP card animation
   window.addEventListener("load", () => {
     gsap.to("#mainCard", {opacity:1, y:0, duration:1, ease:"power3.out"});
   });
 
-  // Year list
+  // Year select options
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const option = document.createElement('option');
@@ -169,7 +177,7 @@
     yearSelect.appendChild(option);
   }
 
-  // Toast animation
+  // Toast animation function
   function showToast(msg, type="success") {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
@@ -186,6 +194,7 @@
     gsap.to(toast, {opacity:0, y:40, delay:2, duration:0.6, ease:"power2.in"});
   }
 
+  // Functions
   function randomDigit() { return Math.floor(Math.random() * 10); }
   function isValidLuhn(number) {
     let sum = 0, shouldDouble = false;
