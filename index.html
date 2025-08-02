@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fake Realistic Profile Generator</title>
+  <title>Realistic Profile Generator</title>
   <style>
     body { background:#121212; color:#eee; font-family:sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px;}
     .card { background:#1e1e1e; padding:20px; border-radius:10px; width:100%; max-width:500px;}
@@ -21,7 +21,7 @@
       <option value="">-- Select Country --</option>
       <option value="us">United States</option>
       <option value="ca">Canada</option>
-      <option value="gb">Great Britain</option>
+      <option value="gb">United Kingdom</option>
       <option value="in">India</option>
       <option value="bd">Bangladesh</option>
     </select>
@@ -43,33 +43,57 @@
   const infoBox = document.getElementById('infoBox');
   const btn = document.getElementById('generateBtn');
   const copyBtn = document.getElementById('copyBtn');
+  const fakerInstance = window.faker;
+
+  const localeMap = {
+    us: 'en_US',
+    ca: 'en_CA',
+    gb: 'en_GB',
+    in: 'en_IND' // faker doesn't have en_IN in new version, IND is fallback
+  };
 
   async function generate() {
     const code = countrySelect.value;
     if (!code) { alert('Select a country first'); return; }
-    // fetch random postal code via sample zip? zippopotam can't random so pick common example zip
-    // For demo use fixed postal-code if cannot random fetch country list
+
+    // sample zip (for demo), real API call will use it
     const sampleZip = code === 'us' ? '90210' :
                       code === 'ca' ? 'M5H' :
                       code === 'gb' ? 'SW1A' :
                       code === 'in' ? '110001' :
                       '1000';
+
     const api = `https://api.zippopotam.us/${code}/${sampleZip}`;
     try {
       const res = await fetch(api);
-      if (!res.ok) throw new Error('No data');
+      if (!res.ok) throw new Error('No data found');
       const data = await res.json();
-      const place = data.places[ Math.floor(Math.random()*data.places.length) ];
-      const locale = { us:'en_US', ca:'en_CA', gb:'en_GB', in:'en_IN', bd:'bn_BD' }[code];
-      const faker = window['faker'][locale ? locale.replace('_','') : 'faker'];
+      const place = data.places[Math.floor(Math.random() * data.places.length)];
 
-      const name = faker.person.fullName();
-      const street = faker.location.streetAddress();
+      // Set locale if available
+      const locale = localeMap[code] || 'en';
+      try {
+        fakerInstance.setLocale(locale);
+      } catch {
+        fakerInstance.setLocale('en');
+      }
+
+      // Name & Address generate
+      const name = fakerInstance.person.fullName();
+      const street = fakerInstance.location.streetAddress();
       const city = place['place name'];
       const state = place.state;
       const zip = place['post code'];
-      const phone = faker.phone.number({ style:'international' });
-      const email = faker.internet.email();
+      let phone;
+
+      if (code === 'bd') {
+        // Bangladesh fallback phone
+        phone = `+8801${Math.floor(Math.random()*9)}${Math.floor(10000000+Math.random()*90000000)}`;
+      } else {
+        phone = fakerInstance.phone.number({ style: 'international' });
+      }
+
+      const email = fakerInstance.internet.email();
 
       infoBox.innerHTML = `
         <p><strong>Name:</strong> ${name}</p>
@@ -79,14 +103,14 @@
         <p><strong>Zip:</strong> ${zip}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Email:</strong> ${email}</p>`;
-    } catch(e) {
-      alert('Failed to fetch location: ' + e);
+    } catch (e) {
+      alert('Failed to fetch location: ' + e.message);
     }
   }
 
   btn.addEventListener('click', generate);
   copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(infoBox.innerText).then(()=>alert('Copied!'));
+    navigator.clipboard.writeText(infoBox.innerText).then(() => alert('Copied!'));
   });
 </script>
 </body>
