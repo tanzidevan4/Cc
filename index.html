@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Ultra Glassified (Dark/Light)</title>
+  <title>CC Generator - Dark/Light Mode</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -11,9 +11,9 @@
     :root {
       --bg: #000;
       --text: #fff;
-      --glass-bg: rgba(255,255,255,0.03);
-      --table-head: rgba(255,255,255,0.04);
-      --row-bg: rgba(255,255,255,0.02);
+      --glass: rgba(255,255,255,0.03);
+      --thead: rgba(255,255,255,0.04);
+      --row: rgba(255,255,255,0.02);
       --row-hover: rgba(255,255,255,0.08);
       --btn-bg: #fff;
       --btn-text: #000;
@@ -22,9 +22,9 @@
     .light {
       --bg: #fff;
       --text: #000;
-      --glass-bg: rgba(0,0,0,0.03);
-      --table-head: rgba(0,0,0,0.04);
-      --row-bg: rgba(0,0,0,0.02);
+      --glass: rgba(0,0,0,0.03);
+      --thead: rgba(0,0,0,0.04);
+      --row: rgba(0,0,0,0.02);
       --row-hover: rgba(0,0,0,0.08);
       --btn-bg: #000;
       --btn-text: #fff;
@@ -39,21 +39,20 @@
     }
     canvas {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
+      top:0; left:0;
+      width:100%; height:100%;
+      z-index:0;
       pointer-events: none;
     }
     .glass {
-      background: var(--glass-bg) !important;
+      background: var(--glass) !important;
       backdrop-filter: blur(25px) saturate(150%);
       -webkit-backdrop-filter: blur(25px) saturate(150%);
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
-    thead { background: var(--table-head) !important; }
-    tbody tr { background: var(--row-bg); transition: background 0.3s; }
+    thead { background: var(--thead) !important; }
+    tbody tr { background: var(--row); transition: 0.3s; }
     tbody tr:hover { background: var(--row-hover); }
-    input,select { background: rgba(255,255,255,0.05) !important; color: var(--text); }
     button {
       background: var(--btn-bg) !important;
       color: var(--btn-text) !important;
@@ -61,14 +60,34 @@
       transition: all 0.3s;
     }
     button:hover { transform: scale(1.05); }
+    #toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(40px);
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      background: var(--btn-bg);
+      color: var(--btn-text);
+    }
+    #toast svg { width: 22px; height: 22px; }
     #modeToggle {
       position: absolute;
-      top: 20px; right: 20px;
-      padding: 6px 14px;
-      border-radius: 8px;
-      z-index: 50;
+      top:20px; right:20px;
+      z-index:50;
+      padding:6px 14px;
+      border-radius:8px;
     }
-    #ccTableBody td:nth-child(2) { font-family: monospace; white-space: nowrap; }
+    #ccTableBody td:nth-child(2) {
+      font-family: monospace;
+      white-space: nowrap;
+      font-size: 18px;
+    }
+    @media(max-width:640px){
+      #ccTableBody td { font-size: 14px; padding:6px 4px;}
+      #ccTableBody td:nth-child(2){ font-size: 12px;}
+      thead th { font-size: 12px; padding: 6px 4px;}
+    }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative">
@@ -81,7 +100,7 @@
 
   <!-- Main Card -->
   <div id="mainCard" class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 translate-y-10 z-10">
-    <!-- LEFT -->
+    <!-- LEFT SIDE -->
     <div class="flex flex-col justify-between">
       <div>
         <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-6">💳 CC Generator</h1>
@@ -123,7 +142,7 @@
       <button onclick="generate()" class="w-full rounded-xl py-3">Generate</button>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT SIDE -->
     <div class="flex flex-col justify-between">
       <div class="flex flex-col flex-1">
         <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
@@ -150,7 +169,7 @@
         <div class="flex items-center justify-center gap-2">
           <span class="text-xs">Copy CC Only</span>
           <label class="relative inline-block w-12 h-6">
-            <input type="checkbox" id="ccOnlyToggle" class="hidden" />
+            <input type="checkbox" id="ccOnlyToggle" class="toggle-input hidden" />
             <span class="absolute inset-0 glass rounded-full transition">
               <span class="toggle-dot absolute left-1 top-1 bg-gray-300 w-4 h-4 rounded-full"></span>
             </span>
@@ -161,7 +180,10 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold hidden"></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
+    <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <span id="toastMsg"></span>
+  </div>
 
 <script>
   // Animation
@@ -169,7 +191,7 @@
     gsap.to("#mainCard", {opacity:1, y:0, duration:1, ease:"power3.out"});
   });
 
-  // Year options
+  // Year dropdown fill
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const opt = document.createElement('option');
@@ -177,21 +199,26 @@
     yearSelect.appendChild(opt);
   }
 
-  // Toast
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.remove('hidden');
-    setTimeout(()=>toast.classList.add('hidden'),2000);
+  // Toast show function
+  function showToast(msg,type="success"){
+    const toast=document.getElementById('toast');
+    const icon=document.getElementById('toastIcon');
+    const txt=document.getElementById('toastMsg');
+    if(type==="success") icon.innerHTML='<polyline points="20 6 9 17 4 12"></polyline>';
+    if(type==="error") icon.innerHTML='<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
+    if(type==="warn") icon.innerHTML='<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line>';
+    txt.textContent=msg;
+    gsap.killTweensOf(toast);
+    gsap.to(toast,{opacity:1,y:0,duration:0.4,ease:"power2.out"});
+    gsap.to(toast,{opacity:0,y:40,delay:2,duration:0.6,ease:"power2.in"});
   }
 
-  // Card generation
+  // Card generation functions
   function randomDigit(){ return Math.floor(Math.random()*10);}
   function isValidLuhn(num){
     let sum=0,dbl=false;
     for(let i=num.length-1;i>=0;i--){
-      let d=parseInt(num[i]);
-      if(dbl){ d*=2; if(d>9)d-=9;}
+      let d=parseInt(num[i]); if(dbl){d*=2;if(d>9)d-=9;}
       sum+=d; dbl=!dbl;
     }
     return sum%10===0;
@@ -200,23 +227,22 @@
     let clean=pattern.replace(/\s|-/g,''),len=isAmex?15:16;
     if(clean.length>len)clean=clean.slice(0,len);
     for(let t=0;t<1000;t++){
-      let cand='';
-      for(let ch of clean) cand+=/[xX#]/.test(ch)?randomDigit():ch;
+      let cand=''; for(let ch of clean) cand+=/[xX#]/.test(ch)?randomDigit():ch;
       if(cand.length<len){
         while(cand.length<len-1)cand+=randomDigit();
         for(let d=0;d<10;d++) if(isValidLuhn(cand+d)){cand+=d;break;}
       }
-      if(cand.length===len && isValidLuhn(cand)) return cand;
+      if(cand.length===len&&isValidLuhn(cand)) return cand;
     }
     return null;
   }
-  function randomNum(len){ return Array.from({length:len},()=>randomDigit()).join(''); }
+  function randomNum(len){return Array.from({length:len},()=>randomDigit()).join('');}
 
   function generate(){
     const tbody=document.getElementById('ccTableBody');
     tbody.innerHTML='';
     const bin=document.getElementById('bin').value.trim();
-    if(bin.length<6) return showToast('❌ Pattern must be at least 6 chars');
+    if(bin.length<6){showToast("Pattern must be at least 6 characters!","error");return;}
     const month=document.getElementById('month').value;
     const year=document.getElementById('year').value;
     const cvv=document.getElementById('cvv').value;
@@ -227,15 +253,15 @@
     for(let i=0;i<qty;i++){
       let card=generatePattern(bin,isAmex); if(!card) continue;
       let yy,mm;
-      if(year==='random'){
+      if(year==="random"){
         yy=Math.floor(Math.random()*11)+cy;
         mm=(yy===cy)
-          ?(month==='random'?String(Math.floor(Math.random()*(12-cm+1)+cm)).padStart(2,'0'):month)
-          :(month==='random'?String(Math.floor(Math.random()*12+1)).padStart(2,'0'):month);
+          ?(month==="random"?String(Math.floor(Math.random()*(12-cm+1)+cm)).padStart(2,"0"):month)
+          :(month==="random"?String(Math.floor(Math.random()*12+1)).padStart(2,"0"):month);
       } else {
-        yy=year; mm=(month==='random')?String(Math.floor(Math.random()*12+1)).padStart(2,'0'):month;
+        yy=year; mm=(month==="random")?String(Math.floor(Math.random()*12+1)).padStart(2,"0"):month;
       }
-      const ccv=(cvv==='')?randomNum(isAmex?4:3):cvv;
+      const ccv=(cvv==="")?randomNum(isAmex?4:3):cvv;
       lines.push(`${card}|${mm}|${yy}|${ccv}`);
     }
     lines.forEach((line,i)=>{
@@ -247,27 +273,38 @@
           <button class="px-3 py-1 rounded-md" onclick="copySingle('${line}')">Copy</button>
         </td>`;
       tbody.appendChild(tr);
+      gsap.from(tr,{opacity:0,y:20,duration:0.3,delay:i*0.05});
     });
-    showToast('✅ Cards Generated!');
+    adjustFontSize();
+    showToast("Cards Generated!","success");
   }
 
   function copySingle(line){
     const only=document.getElementById('ccOnlyToggle').checked;
     const text=only?line.split('|')[0]:line;
     navigator.clipboard.writeText(text);
-    showToast(only?'📋 CC Number Copied!':'📋 Full Line Copied!');
+    showToast(only?"Only CC Number Copied!":"Full Line Copied!","success");
   }
-
   function copyAll(){
-    const rows=[...document.querySelectorAll('#ccTableBody td:nth-child(2)')];
-    if(rows.length===0) return showToast('⚠️ Nothing to copy!');
     const only=document.getElementById('ccOnlyToggle').checked;
-    const text=rows.map(td=>only?td.textContent.split('|')[0]:td.textContent).join('\n');
+    const rows=[...document.querySelectorAll('#ccTableBody td:nth-child(2)')];
+    if(rows.length===0){showToast("Nothing to copy!","warn");return;}
+    const text=rows.map(td=>only?td.textContent.split('|')[0]:td.textContent).join("\n");
     navigator.clipboard.writeText(text);
-    showToast(only?'📋 Only CC Numbers Copied!':'📋 All Data Copied!');
+    showToast(only?"Only CC Numbers Copied!":"All Data Copied!","success");
   }
 
-  // Dark/Light Toggle
+  // Font size adjust like original
+  function adjustFontSize(){
+    const rows=document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
+    rows.forEach(cell=>{
+      if(window.innerWidth<640) cell.style.fontSize="12px";
+      else cell.style.fontSize="18px";
+    });
+  }
+  window.addEventListener("resize",adjustFontSize);
+
+  // Dark/Light toggle
   document.getElementById('modeToggle').addEventListener('click',()=>{
     document.body.classList.toggle('light');
     const btn=document.getElementById('modeToggle');
@@ -280,7 +317,8 @@
   let particles=[];
   function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
   window.addEventListener('resize',resizeCanvas);resizeCanvas();
-  function createParticles(){particles=[];
+  function createParticles(){
+    particles=[];
     for(let i=0;i<50;i++){
       particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-.5)*.5,dy:(Math.random()-.5)*.5});
     }
@@ -293,7 +331,7 @@
       ctx.beginPath();
       ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fill();
-      p.x+=p.dx;p.y+=p.dy;
+      p.x+=p.dx; p.y+=p.dy;
       if(p.x<0||p.x>canvas.width)p.dx*=-1;
       if(p.y<0||p.y>canvas.height)p.dy*=-1;
     });
