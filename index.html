@@ -63,12 +63,10 @@
             color: var(--text-color);
             overflow-x: hidden;
             transition: background 0.3s ease, color 0.3s ease;
-            /* --- MODIFIED: Added relative position to contain the canvas --- */
             position: relative; 
         }
 
         canvas#particles {
-            /* --- MODIFIED: Changed position to absolute to scroll with the page --- */
             position: absolute;
             top: 0;
             left: 0;
@@ -250,14 +248,18 @@
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
                 <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6">COPY ALL</button>
-                <div class="flex items-center justify-center gap-2">
+                
+                <!-- START: MODIFIED AND FIXED SECTION -->
+                <label for="ccOnlyToggle" class="flex items-center justify-center gap-2 cursor-pointer relative z-10 p-2">
                     <span class="text-xs">Copy CC Only</span>
-                    <label class="relative inline-block w-16 h-8 cursor-pointer">
+                    <div class="relative w-16 h-8">
                         <input type="checkbox" id="ccOnlyToggle" class="sr-only peer">
                         <span class="toggle-bg absolute inset-0 rounded-full"></span>
                         <span class="toggle-handle absolute top-1 w-6 h-6 rounded-full"></span>
-                    </label>
-                </div>
+                    </div>
+                </label>
+                <!-- END: MODIFIED AND FIXED SECTION -->
+
             </div>
         </div>
     </div>
