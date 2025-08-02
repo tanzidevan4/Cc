@@ -31,7 +31,6 @@
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #000000;
             --particle-color: rgba(255,255,255,0.85);
-            --focus-ring-color: #fff;
         }
 
         .light-mode {
@@ -56,7 +55,6 @@
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #ffffff;
             --particle-color: rgba(0,0,0,0.8);
-            --focus-ring-color: #000;
         }
 
         body {
@@ -103,7 +101,6 @@
         .btn-main:hover { background-color: var(--main-btn-hover-bg); }
         .btn-secondary { background-color: var(--secondary-btn-bg); color: var(--secondary-btn-text); }
         .btn-secondary:hover { background-color: var(--secondary-btn-hover-bg); }
-
         .btn-copy { background-color: var(--secondary-btn-bg); color: var(--secondary-btn-text); }
         .btn-copy:hover { background-color: var(--secondary-btn-hover-bg); }
         
@@ -135,7 +132,7 @@
 <body class="min-h-screen flex items-center justify-center p-4">
     <canvas id="particles"></canvas>
     
-    <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-color)] focus:ring-[var(--focus-ring-color)]">
+    <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none">
         <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
@@ -179,7 +176,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 mt-4 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-color)] focus:ring-[var(--focus-ring-color)]">Generate</button>
+            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 mt-4 focus:outline-none">Generate</button>
         </div>
 
         <!-- RIGHT SIDE -->
@@ -204,8 +201,7 @@
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
-                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-color)] focus:ring-[var(--focus-ring-color)]">COPY ALL</button>
-                <!-- --- MODIFIED: Added relative and z-10 to fix mobile click issue --- -->
+                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 focus:outline-none">COPY ALL</button>
                 <div class="flex items-center justify-center gap-2 relative z-10">
                     <span class="text-xs">Copy CC Only</span>
                     <label class="relative inline-block w-16 h-8 cursor-pointer">
@@ -297,14 +293,17 @@
         }
 
         function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
-
+        
+        // --- MODIFIED: generate() function reverted to the original logic ---
         function generate() {
             saveInputs();
             const tableBody = document.querySelector("#ccTableBody");
             tableBody.innerHTML = "";
-            let pattern = document.getElementById('bin').value.trim(), month = document.getElementById('month').value, year = document.getElementById('year').value;
-            let cvv = document.getElementById('cvv').value, qty = parseInt(document.getElementById('qty').value), output = [];
+            let pattern = document.getElementById('bin').value.trim();
             if (pattern.length < 6) { showToast("Pattern must be at least 6 characters!", "error"); return; }
+            let month = document.getElementById('month').value, year = document.getElementById('year').value;
+            let cvv = document.getElementById('cvv').value, qty = parseInt(document.getElementById('qty').value);
+            let output = [];
             const isAmex = pattern.startsWith("3"), now = new Date(), currentYear = now.getFullYear() % 100, currentMonth = now.getMonth() + 1;
             for (let i = 0; i < qty; i++) {
                 let card = generatePattern(pattern, isAmex);
@@ -320,7 +319,7 @@
             if (output.length === 0) { showToast("Could not generate valid cards.", "error"); } else { showToast("Cards Generated!", "success"); }
             output.forEach((line, index) => {
                 const row = document.createElement("tr");
-                row.innerHTML = `<td class="px-3 py-3 w-[10%]">${index + 1}</td> <td class="px-3 py-3 w-[65%]">${line}</td> <td class="px-3 py-3 text-center w-[25%]"><button class="btn-copy px-3 py-1 rounded-md text-xs" onclick="copySingle('${line}')">Copy</button></td>`;
+                row.innerHTML = `<td class="px-3 py-3 w-[10%]">${index + 1}</td> <td class="px-3 py-3 w-[65%]">${line}</td> <td class="px-3 py-3 text-center w-[25%]"><button class="btn-copy px-3 py-1 rounded-md text-xs focus:outline-none" onclick="copySingle('${line}')">Copy</button></td>`;
                 tableBody.appendChild(row);
                 gsap.from(row, { opacity: 0, y: 20, duration: 0.3, delay: index * 0.05 });
             });
