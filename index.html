@@ -22,12 +22,11 @@
 
   <canvas id="particles"></canvas>
 
-  <div id="mainGrid" class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 md:p-10 w-[95%] max-w-5xl text-white 
-              grid grid-cols-1 md:grid-cols-2 gap-8">
+  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 md:p-10 w-[95%] max-w-5xl text-white grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
     
     <!-- LEFT SIDE -->
-    <div id="leftCol" class="flex flex-col justify-between">
-      <div class="flex-1"> 
+    <div class="flex flex-col">
+      <div class="flex-1">
         <h1 class="text-3xl md:text-4xl font-extrabold text-center text-cyan-400 mb-6">💳 CC Generator</h1>
 
         <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
@@ -67,12 +66,14 @@
       </div>
 
       <!-- Bottom button left -->
-      <button onclick="generate()" 
-        class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
+      <div class="mt-4">
+        <button onclick="generate()" 
+          class="w-full bg-cyan-400 text-black font-bold rounded-lg py-3 hover:bg-cyan-300 transition">Generate</button>
+      </div>
     </div>
 
     <!-- RIGHT SIDE -->
-    <div id="rightCol" class="flex flex-col justify-between">
+    <div class="flex flex-col">
       <div class="flex flex-col flex-1">
         <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
 
@@ -227,7 +228,6 @@
     });
 
     showToast("✅ Cards Generated!");
-    syncHeight(); // update height if content changes
   }
 
   function copySingle(line) {
@@ -246,21 +246,6 @@
     navigator.clipboard.writeText(textToCopy);
     showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
   }
-
-  // **Height Sync JS**
-  function syncHeight() {
-    const left = document.getElementById('leftCol');
-    const right = document.getElementById('rightCol');
-    left.style.height = 'auto'; // reset
-    if (window.innerWidth >= 768) {
-      left.style.height = `${right.offsetHeight}px`;
-    } else {
-      left.style.height = 'auto';
-    }
-  }
-
-  window.addEventListener('load', syncHeight);
-  window.addEventListener('resize', syncHeight);
 </script>
 
 <script>
