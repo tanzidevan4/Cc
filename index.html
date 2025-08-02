@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Monospace Fixed Version</title>
+  <title>CC Generator - Bigger Font</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
@@ -21,21 +21,22 @@
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
       letter-spacing: 0.5px;
+      font-size: 18px; /* বড় font size by default */
     }
 
     /* Small screen font & padding adjust */
     @media (max-width: 640px) {
       #ccTableBody td {
-        font-size: 12px;
+        font-size: 14px;
         padding: 6px 4px;
       }
       #ccTableBody td:nth-child(2) {
         word-break: break-all;
-        font-size: 11px;
-        font-family: monospace; /* ছোট screen এও monospaced */
+        font-size: 13px;
+        font-family: monospace;
       }
       thead th {
-        font-size: 10px;
+        font-size: 12px;
         padding: 6px 4px;
       }
     }
@@ -274,9 +275,9 @@
     const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
     rows.forEach(cell => {
       if (window.innerWidth < 640) {
-        cell.style.fontSize = "11px";
+        cell.style.fontSize = "13px";
       } else {
-        cell.style.fontSize = "16px";
+        cell.style.fontSize = "18px";
       }
     });
   }
