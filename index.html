@@ -3,108 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CC Generator - Final</title>
+    <title>CC Generator - Final Corrected</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
-        /* CSS Variables for Theming */
         :root {
-            --bg-color: #000;
-            --text-color: #fff;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --input-placeholder-color: rgba(255, 255, 255, 0.4);
-            --table-header-bg: rgba(255, 255, 255, 0.04);
-            --table-row-hover-bg: rgba(255, 255, 255, 0.08);
-            --main-btn-bg: #fff;
-            --main-btn-text: #000;
-            --main-btn-hover-bg: #e0e0e0;
-            --copy-btn-bg: #fff;
-            --copy-btn-text: #000;
-            --copy-btn-hover-bg: #e0e0e0;
-            --toast-bg: #fff;
-            --toast-text: #000;
-            --toggle-bg: #4b5563; /* gray-600 */
-            --toggle-checked-bg: #06b6d4; /* cyan-500 */
+            --bg-color: #000; --text-color: #fff; --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12); --input-bg: rgba(255, 255, 255, 0.05);
+            --input-placeholder-color: rgba(255, 255, 255, 0.4); --table-header-bg: rgba(255, 255, 255, 0.04);
+            --table-row-hover-bg: rgba(255, 255, 255, 0.08); --main-btn-bg: #fff; --main-btn-text: #000;
+            --main-btn-hover-bg: #e0e0e0; --copy-btn-bg: #fff; --copy-btn-text: #000;
+            --copy-btn-hover-bg: #e0e0e0; --toast-bg: #fff; --toast-text: #000;
+            --toggle-bg: #4b5563; --toggle-checked-bg: #06b6d4;
         }
-
         .light-mode {
-            --bg-color: #f5f5f5;
-            --text-color: #000;
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.05);
-            --input-placeholder-color: rgba(0, 0, 0, 0.4);
-            --table-header-bg: rgba(0, 0, 0, 0.04);
-            --table-row-hover-bg: rgba(0, 0, 0, 0.08);
-            --main-btn-bg: #000;
-            --main-btn-text: #fff;
-            --main-btn-hover-bg: #333;
-            --copy-btn-bg: #000;
-            --copy-btn-text: #fff;
-            --copy-btn-hover-bg: #333;
-            --toast-bg: #000;
-            --toast-text: #fff;
-            --toggle-bg: #d1d5db; /* gray-300 */
+            --bg-color: #f5f5f5; --text-color: #000; --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.1); --input-bg: rgba(0, 0, 0, 0.05);
+            --input-placeholder-color: rgba(0, 0, 0, 0.4); --table-header-bg: rgba(0, 0, 0, 0.04);
+            --table-row-hover-bg: rgba(0, 0, 0, 0.08); --main-btn-bg: #000; --main-btn-text: #fff;
+            --main-btn-hover-bg: #333; --copy-btn-bg: #000; --copy-btn-text: #fff;
+            --copy-btn-hover-bg: #333; --toast-bg: #000; --toast-text: #fff;
+            --toggle-bg: #d1d5db;
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-        }
-
-        .glass {
-            background: var(--glass-bg) !important;
-            backdrop-filter: blur(25px) saturate(150%);
-            -webkit-backdrop-filter: blur(25px) saturate(150%);
-            border: 1px solid var(--glass-border);
-            transition: background 0.3s ease, border 0.3s ease;
-        }
-
-        input, select {
-            background: var(--input-bg) !important;
-            color: var(--text-color);
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
+        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); overflow-x: hidden; transition: background 0.3s ease, color 0.3s ease; }
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+        .glass { background: var(--glass-bg) !important; backdrop-filter: blur(25px) saturate(150%); -webkit-backdrop-filter: blur(25px) saturate(150%); border: 1px solid var(--glass-border); transition: background 0.3s ease, border 0.3s ease; }
+        input, select { background: var(--input-bg) !important; color: var(--text-color); transition: background 0.3s ease, color 0.3s ease; }
         input::placeholder { color: var(--input-placeholder-color); }
         thead { background: var(--table-header-bg) !important; }
         tbody tr:hover { background: var(--table-row-hover-bg); }
-
         .btn-main { background-color: var(--main-btn-bg); color: var(--main-btn-text); }
         .btn-main:hover { background-color: var(--main-btn-hover-bg); }
         .btn-copy { background-color: var(--copy-btn-bg); color: var(--copy-btn-text); }
         .btn-copy:hover { background-color: var(--copy-btn-hover-bg); }
-        
-        #toast {
-            display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(40px);
-            box-shadow: 0 0 20px rgba(0,0,0,0.3); background: var(--toast-bg); color: var(--toast-text);
-        }
+        #toast { display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateY(40px); box-shadow: 0 0 20px rgba(0,0,0,0.3); background: var(--toast-bg); color: var(--toast-text); }
         .light-mode #toast { box-shadow: 0 0 20px rgba(0,0,0,0.2); }
         #toast svg { width: 22px; height: 22px; flex-shrink: 0; }
-
-        /* --- FIXED: Toggle Switch CSS from Base Script --- */
         .toggle-bg { background-color: var(--toggle-bg); }
         .toggle-input:checked + .toggle-bg { background-color: var(--toggle-checked-bg); }
         .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
 
-        /* Font styles for table from base script */
+        /* --- CORRECT FIX: CSS from Base Script for font handling --- */
         #ccTableBody td:nth-child(2) {
-            font-family: monospace; white-space: nowrap; font-size: 18px;
+            font-family: monospace;
+            white-space: nowrap; /* Keeps text in one line */
+            font-size: 18px;     /* Default for large screens */
         }
         @media (max-width: 640px) {
-            #ccTableBody td { font-size: 14px; padding: 6px 4px; }
-            #ccTableBody td:nth-child(2) { font-size: 12px; }
-            thead th { font-size: 12px; padding: 6px 4px; }
+            #ccTableBody td {
+                font-size: 14px;
+                padding: 6px 4px;
+            }
+            #ccTableBody td:nth-child(2) {
+                font-size: 12px; /* Reduces font on small screens to fit */
+            }
+            thead th {
+                font-size: 12px;
+                padding: 6px 4px;
+            }
         }
     </style>
 </head>
@@ -112,12 +69,8 @@
     <canvas id="particles"></canvas>
     
     <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none">
-        <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
+        <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
     </button>
 
     <div id="mainCard" class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 translate-y-10">
@@ -128,31 +81,12 @@
                 <label class="block mb-2 text-sm font-semibold">BIN / Pattern:</label>
                 <input type="text" id="bin" placeholder="Enter BIN or pattern" class="w-full mb-4 p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                    <div class="flex-1">
-                        <label class="block mb-2 text-sm font-semibold">Month:</label>
-                        <select id="month" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
-                            <option value="random">Random</option>
-                            <option>01</option><option>02</option><option>03</option><option>04</option>
-                            <option>05</option><option>06</option><option>07</option><option>08</option>
-                            <option>09</option><option>10</option><option>11</option><option>12</option>
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block mb-2 text-sm font-semibold">Year:</label>
-                        <select id="year" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
-                            <option value="random">Random</option>
-                        </select>
-                    </div>
+                    <div class="flex-1"><label class="block mb-2 text-sm font-semibold">Month:</label><select id="month" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50"><option value="random">Random</option><option>01</option><option>02</option><option>03</option><option>04</option><option>05</option><option>06</option><option>07</option><option>08</option><option>09</option><option>10</option><option>11</option><option>12</option></select></div>
+                    <div class="flex-1"><label class="block mb-2 text-sm font-semibold">Year:</label><select id="year" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50"><option value="random">Random</option></select></div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                    <div class="flex-1">
-                        <label class="block mb-2 text-sm font-semibold">CVV2:</label>
-                        <input type="text" id="cvv" placeholder="Leave blank for random" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block mb-2 text-sm font-semibold">Quantity:</label>
-                        <input type="number" id="qty" value="10" min="1" max="50" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50">
-                    </div>
+                    <div class="flex-1"><label class="block mb-2 text-sm font-semibold">CVV2:</label><input type="text" id="cvv" placeholder="Leave blank for random" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50"></div>
+                    <div class="flex-1"><label class="block mb-2 text-sm font-semibold">Quantity:</label><input type="number" id="qty" value="10" min="1" max="50" class="w-full p-3 rounded-xl glass outline-none focus:ring-2 focus:ring-white/50"></div>
                 </div>
             </div>
             <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 transition transform hover:scale-105">Generate</button>
@@ -174,7 +108,6 @@
                     </table>
                     <div class="overflow-y-auto max-h-64 flex-1">
                         <table class="w-full text-left">
-                             <!-- FIXED: Removed divide-y class that caused horizontal lines -->
                             <tbody id="ccTableBody" class="text-lg"></tbody>
                         </table>
                     </div>
@@ -182,18 +115,13 @@
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
                 <button onclick="copyAll()" class="btn-copy font-bold rounded-xl py-3 px-6 transition transform hover:scale-105">COPY ALL</button>
-                
-                <!-- FIXED: Toggle switch HTML from Base Script for better compatibility -->
                 <div class="flex items-center justify-center gap-2">
                   <span class="text-xs">Copy CC Only</span>
                   <label class="relative inline-block w-12 h-6">
                     <input type="checkbox" id="ccOnlyToggle" class="toggle-input hidden" />
-                    <span class="toggle-bg absolute inset-0 rounded-full transition">
-                      <span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
-                    </span>
+                    <span class="toggle-bg absolute inset-0 rounded-full transition"><span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span></span>
                   </label>
                 </div>
-
             </div>
         </div>
     </div>
@@ -205,121 +133,33 @@
 
     <script>
         // --- THEME TOGGLE SCRIPT ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('theme-icon-sun');
-        const moonIcon = document.getElementById('theme-icon-moon');
-        const rootEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle'); const sunIcon = document.getElementById('theme-icon-sun'); const moonIcon = document.getElementById('theme-icon-moon'); const rootEl = document.documentElement;
+        if (localStorage.getItem('theme') === 'light') { rootEl.classList.add('light-mode'); sunIcon.classList.add('hidden'); moonIcon.classList.remove('hidden'); }
+        themeToggleBtn.addEventListener('click', () => { rootEl.classList.toggle('light-mode'); const isLight = rootEl.classList.contains('light-mode'); localStorage.setItem('theme', isLight ? 'light' : 'dark'); sunIcon.classList.toggle('hidden', isLight); moonIcon.classList.toggle('hidden', !isLight); });
 
-        if (localStorage.getItem('theme') === 'light') {
-            rootEl.classList.add('light-mode');
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-
-        themeToggleBtn.addEventListener('click', () => {
-            rootEl.classList.toggle('light-mode');
-            const isLight = rootEl.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            sunIcon.classList.toggle('hidden', isLight);
-            moonIcon.classList.toggle('hidden', !isLight);
-        });
-
-        // --- ORIGINAL SCRIPT LOGIC ---
-        window.addEventListener("load", () => {
-            gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
-        });
-
+        // --- SCRIPT LOGIC ---
+        window.addEventListener("load", () => { gsap.to("#mainCard", { opacity: 1, y: 0, duration: 1, ease: "power3.out" }); });
         const yearSelect = document.getElementById('year');
-        for (let y = 24; y <= 99; y++) {
-            const option = document.createElement('option');
-            option.value = y.toString();
-            option.textContent = (2000 + y).toString();
-            yearSelect.appendChild(option);
-        }
-
-        function showToast(msg, type = "success") {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const msgSpan = document.getElementById('toastMsg');
-            if (type === "success") icon.innerHTML = '✅ ';
-            if (type === "error") icon.innerHTML = '❌ ';
-            if (type === "warn") icon.innerHTML = '⚠️ ';
-            msgSpan.innerText = msg;
-            gsap.killTweensOf(toast);
-            gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
-            gsap.to(toast, { opacity: 0, y: 40, delay: 2, duration: 0.6, ease: "power2.in" });
-        }
-
+        for (let y = 24; y <= 99; y++) { const option = document.createElement('option'); option.value = y.toString(); option.textContent = (2000 + y).toString(); yearSelect.appendChild(option); }
+        function showToast(msg, type = "success") { const toast = document.getElementById('toast'); const icon = document.getElementById('toastIcon'); const msgSpan = document.getElementById('toastMsg'); if (type === "success") icon.innerHTML = '✅ '; if (type === "error") icon.innerHTML = '❌ '; if (type === "warn") icon.innerHTML = '⚠️ '; msgSpan.innerText = msg; gsap.killTweensOf(toast); gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }); gsap.to(toast, { opacity: 0, y: 40, delay: 2, duration: 0.6, ease: "power2.in" }); }
         function randomDigit() { return Math.floor(Math.random() * 10); }
-
-        function isValidLuhn(number) {
-            let sum = 0, shouldDouble = false;
-            for (let i = number.length - 1; i >= 0; i--) {
-                let digit = parseInt(number[i]);
-                if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
-                sum += digit; shouldDouble = !shouldDouble;
-            }
-            return sum % 10 === 0;
-        }
-
-        function generatePattern(pattern, isAmex) {
-            let cleanPattern = pattern.replace(/\s|-/g, '');
-            let targetLength = isAmex ? 15 : 16;
-            if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength);
-
-            for (let attempt = 0; attempt < 1000; attempt++) {
-                let candidate = "";
-                for (let ch of cleanPattern) candidate += /[xX#]/.test(ch) ? randomDigit() : ch;
-                if (candidate.length < targetLength) {
-                    while (candidate.length < targetLength - 1) candidate += randomDigit();
-                    for (let d = 0; d <= 9; d++) {
-                        let temp = candidate + d;
-                        if (isValidLuhn(temp)) { candidate = temp; break; }
-                    }
-                }
-                if (candidate.length === targetLength && isValidLuhn(candidate)) return candidate;
-            }
-            return null;
-        }
-
+        function isValidLuhn(number) { let sum = 0, shouldDouble = false; for (let i = number.length - 1; i >= 0; i--) { let digit = parseInt(number[i]); if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; } sum += digit; shouldDouble = !shouldDouble; } return sum % 10 === 0; }
+        function generatePattern(pattern, isAmex) { let cleanPattern = pattern.replace(/\s|-/g, ''); let targetLength = isAmex ? 15 : 16; if (cleanPattern.length > targetLength) cleanPattern = cleanPattern.substring(0, targetLength); for (let attempt = 0; attempt < 1000; attempt++) { let candidate = ""; for (let ch of cleanPattern) candidate += /[xX#]/.test(ch) ? randomDigit() : ch; if (candidate.length < targetLength) { while (candidate.length < targetLength - 1) candidate += randomDigit(); for (let d = 0; d <= 9; d++) { let temp = candidate + d; if (isValidLuhn(temp)) { candidate = temp; break; } } } if (candidate.length === targetLength && isValidLuhn(candidate)) return candidate; } return null; }
         function randomNum(length) { return Array.from({ length }, () => randomDigit()).join(''); }
 
         function generate() {
-            const tableBody = document.querySelector("#ccTableBody");
-            tableBody.innerHTML = "";
-
-            let pattern = document.getElementById('bin').value.trim();
-            let month = document.getElementById('month').value;
-            let year = document.getElementById('year').value;
-            let cvv = document.getElementById('cvv').value;
-            let qty = parseInt(document.getElementById('qty').value);
-            let output = [];
-
+            const tableBody = document.querySelector("#ccTableBody"); tableBody.innerHTML = "";
+            let pattern = document.getElementById('bin').value.trim(); let month = document.getElementById('month').value; let year = document.getElementById('year').value; let cvv = document.getElementById('cvv').value; let qty = parseInt(document.getElementById('qty').value); let output = [];
             if (pattern.length < 6) { showToast("Pattern must be at least 6 characters!", "error"); return; }
-
-            const isAmex = pattern.startsWith("3");
-            const now = new Date();
-            const currentYear = now.getFullYear() % 100;
-            const currentMonth = now.getMonth() + 1;
-
+            const isAmex = pattern.startsWith("3"); const now = new Date(); const currentYear = now.getFullYear() % 100; const currentMonth = now.getMonth() + 1;
             for (let i = 0; i < qty; i++) {
-                let card = generatePattern(pattern, isAmex);
-                if (!card) continue;
+                let card = generatePattern(pattern, isAmex); if (!card) continue;
                 let mm, yy;
-                if (year === "random") {
-                    yy = Math.floor(Math.random() * 11) + currentYear;
-                    mm = (yy === currentYear)
-                        ? (month === "random" ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') : month)
-                        : (month === "random" ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month);
-                } else {
-                    yy = year;
-                    mm = (month === "random") ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month;
-                }
-                let cvvLength = isAmex ? 4 : 3;
-                let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
+                if (year === "random") { yy = Math.floor(Math.random() * 11) + currentYear; mm = (yy === currentYear) ? (month === "random" ? String(Math.floor(Math.random() * (12 - currentMonth + 1) + currentMonth)).padStart(2, '0') : month) : (month === "random" ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month); }
+                else { yy = year; mm = (month === "random") ? String(Math.floor(Math.random() * 12 + 1)).padStart(2, '0') : month; }
+                let cvvLength = isAmex ? 4 : 3; let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
                 output.push(`${card}|${mm}|${yy}|${ccv}`);
             }
-
             output.forEach((line, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
@@ -332,53 +172,28 @@
                 tableBody.appendChild(row);
                 gsap.from(row, { opacity: 0, y: 20, duration: 0.3, delay: index * 0.05 });
             });
+            adjustFontSize(); // CORRECT FIX: Call adjust function after generating cards
             showToast("Cards Generated!", "success");
         }
-
-        function copySingle(line) {
-            const ccOnly = document.getElementById('ccOnlyToggle').checked;
-            const textToCopy = ccOnly ? line.split('|')[0] : line;
-            navigator.clipboard.writeText(textToCopy);
-            showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success");
-        }
-
-        function copyAll() {
-            const ccOnly = document.getElementById('ccOnlyToggle').checked;
-            const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")].map(td => td.textContent);
-            if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; }
-            const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
-            navigator.clipboard.writeText(textToCopy);
-            showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success");
-        }
-
-        // --- PARTICLE BACKGROUND SCRIPT (MODIFIED FOR THEME) ---
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas); resizeCanvas();
-        function createParticles() {
-            particles = [];
-            for (let i = 0; i < 50; i++) {
-                particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2 + 1, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 });
-            }
-        }
-        createParticles();
-
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-                p.x += p.dx; p.y += p.dy;
-                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        function copySingle(line) { const ccOnly = document.getElementById('ccOnlyToggle').checked; const textToCopy = ccOnly ? line.split('|')[0] : line; navigator.clipboard.writeText(textToCopy); showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success"); }
+        function copyAll() { const ccOnly = document.getElementById('ccOnlyToggle').checked; const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")].map(td => td.textContent); if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; } const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n'); navigator.clipboard.writeText(textToCopy); showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success"); }
+        
+        // --- CORRECT FIX: Added the adjustFontSize function from Base Script ---
+        function adjustFontSize() {
+            const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
+            rows.forEach(cell => {
+                if (window.innerWidth < 640) { cell.style.fontSize = "12px"; } 
+                else { cell.style.fontSize = "18px"; }
             });
-            requestAnimationFrame(drawParticles);
         }
+        window.addEventListener("resize", adjustFontSize); // Call on window resize
+
+        // --- PARTICLE SCRIPT ---
+        const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas, false); createParticles(); // Added resize listener for particles too
+        function createParticles() { particles = []; for (let i = 0; i < 50; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2 + 1, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 }); } }
+        function drawParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); const isLightMode = document.documentElement.classList.contains('light-mode'); ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)'; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill(); p.x += p.dx; p.y += p.dy; if (p.x < 0 || p.x > canvas.width) p.dx *= -1; if (p.y < 0 || p.y > canvas.height) p.dy *= -1; }); requestAnimationFrame(drawParticles); }
         drawParticles();
     </script>
 </body>
