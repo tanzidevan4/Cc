@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Responsive Version</title>
+  <title>CC Generator - Auto Adjust Version</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
@@ -16,6 +16,22 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
+
+    /* Small screen font & padding adjust */
+    @media (max-width: 640px) {
+      #ccTableBody td {
+        font-size: 12px;
+        padding: 6px 4px;
+      }
+      #ccTableBody td:nth-child(2) {
+        word-break: break-all;
+        font-size: 11px;
+      }
+      thead th {
+        font-size: 10px;
+        padding: 6px 4px;
+      }
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center p-2">
@@ -77,20 +93,18 @@
 
         <div class="rounded-lg bg-white/20 flex-1 flex flex-col overflow-hidden">
           <!-- Header -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left min-w-[400px]">
-              <thead class="bg-slate-800 text-xs uppercase sticky top-0">
-                <tr>
-                  <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
-                  <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
-                  <th class="px-3 py-3 text-center rounded-tr-lg w-[25%]">Action</th>
-                </tr>
-              </thead>
-            </table>
-          </div>
+          <table class="w-full text-left">
+            <thead class="bg-slate-800 text-xs uppercase sticky top-0">
+              <tr>
+                <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
+                <th class="px-3 py-3 text-left w-[65%]">Card Details</th>
+                <th class="px-3 py-3 text-center rounded-tr-lg w-[25%]">Action</th>
+              </tr>
+            </thead>
+          </table>
           <!-- Scrollable body -->
-          <div class="overflow-y-auto max-h-64 overflow-x-auto">
-            <table class="w-full text-left min-w-[400px]">
+          <div class="overflow-y-auto max-h-64 flex-1">
+            <table class="w-full text-left">
               <tbody id="ccTableBody" class="text-lg divide-y divide-white/10">
                 <!-- Rows dynamically generated -->
               </tbody>
@@ -227,6 +241,7 @@
       tableBody.appendChild(row);
     });
 
+    adjustFontSize(); // Font size adjust call
     showToast("✅ Cards Generated!");
   }
 
@@ -246,6 +261,19 @@
     navigator.clipboard.writeText(textToCopy);
     showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
   }
+
+  // Font size adjust function for generated rows
+  function adjustFontSize() {
+    const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
+    rows.forEach(cell => {
+      if (window.innerWidth < 640) {
+        cell.style.fontSize = "11px";
+      } else {
+        cell.style.fontSize = "16px";
+      }
+    });
+  }
+  window.addEventListener("resize", adjustFontSize);
 </script>
 
 <script>
