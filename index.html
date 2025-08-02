@@ -26,11 +26,13 @@
             --secondary-btn-hover-bg: #e0e0e0;
             --toast-bg: #fff;
             --toast-text: #000;
-            /* --- NEW: Toggle Switch Colors for Dark Mode --- */
             --toggle-off-bg: #4A5568;
             --toggle-on-bg: #ffffff;
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #000000;
+            /* --- NEW: Particle Colors --- */
+            --particle-color: 'rgba(255,255,255,0.7)';
+            --line-color: 'rgba(255,255,255,0.1)';
         }
 
         .light-mode {
@@ -50,11 +52,13 @@
             --secondary-btn-hover-bg: #333;
             --toast-bg: #000;
             --toast-text: #fff;
-            /* --- NEW: Toggle Switch Colors for Light Mode --- */
             --toggle-off-bg: #D1D5DB;
             --toggle-on-bg: #000000;
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #ffffff;
+            /* --- NEW: Particle Colors --- */
+            --particle-color: 'rgba(0,0,0,0.7)';
+            --line-color: 'rgba(0,0,0,0.1)';
         }
 
         body {
@@ -65,7 +69,7 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
 
-        canvas {
+        canvas#particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -100,6 +104,9 @@
             background: var(--table-row-hover-bg);
         }
 
+        .btn-main, .btn-secondary {
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
         .btn-main {
             background-color: var(--main-btn-bg);
             color: var(--main-btn-text);
@@ -150,7 +157,6 @@
             thead th { font-size: 12px; padding: 6px 4px; }
         }
 
-        /* --- NEW: Custom Toggle Switch Styles --- */
         .toggle-bg {
             background-color: var(--toggle-off-bg);
             transition: background-color 0.3s ease;
@@ -163,11 +169,11 @@
         .toggle-handle {
             background-color: var(--toggle-handle-bg);
             transition: all 0.3s ease;
-            transform: translateX(0.25rem); /* Start position */
+            transform: translateX(0.25rem);
         }
 
         .peer:checked ~ .toggle-handle {
-            transform: translateX(2.25rem); /* End position for w-16 container */
+            transform: translateX(2.25rem);
             background-color: var(--toggle-handle-on-bg);
         }
     </style>
@@ -175,7 +181,6 @@
 <body class="min-h-screen flex items-center justify-center p-4 relative">
     <canvas id="particles"></canvas>
     
-    <!-- THEME TOGGLE BUTTON -->
     <button id="theme-toggle" class="fixed top-5 right-5 z-50 p-2 rounded-full glass focus:outline-none">
         <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -220,7 +225,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3 transition">Generate</button>
+            <button onclick="generate()" class="w-full btn-main font-bold rounded-xl py-3">Generate</button>
         </div>
 
         <!-- RIGHT SIDE -->
@@ -245,10 +250,9 @@
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
-                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6 transition">COPY ALL</button>
+                <button onclick="copyAll()" class="btn-secondary font-bold rounded-xl py-3 px-6">COPY ALL</button>
                 <div class="flex items-center justify-center gap-2">
                     <span class="text-xs">Copy CC Only</span>
-                    <!-- --- UPDATED: New Toggle Switch HTML --- -->
                     <label class="relative inline-block w-16 h-8 cursor-pointer">
                         <input type="checkbox" id="ccOnlyToggle" class="sr-only peer">
                         <span class="toggle-bg absolute inset-0 rounded-full"></span>
@@ -259,13 +263,13 @@
         </div>
     </div>
     
-    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
         <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
         <span id="toastMsg"></span>
     </div>
 
     <script>
+        // --- ALL PREVIOUS SCRIPTS (THEME, FORM SAVE/LOAD, GENERATOR LOGIC) ---
         // --- THEME TOGGLE SCRIPT ---
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('theme-icon-sun');
@@ -419,7 +423,7 @@
                 let cvvLength = isAmex ? 4 : 3;
                 let ccv = (cvv === "") ? randomNum(cvvLength) : cvv;
 
-                output.push(`${card}|${mm}|${2000 + parseInt(yy)}|${ccv}`);
+                output.push(`${card}|${mm}|${yy}|${ccv}`);
             }
 
             if (output.length === 0) {
@@ -430,15 +434,12 @@
             
             output.forEach((line, index) => {
                 const row = document.createElement("tr");
-                const parts = line.split('|');
-                const displayLine = `${parts[0]}|${parts[1]}|${parts[2].slice(-2)}|${parts[3]}`;
-
                 row.innerHTML = `
                     <td class="px-3 py-3 w-[10%]">${index + 1}</td>
-                    <td class="px-3 py-3 w-[65%]">${displayLine}</td>
+                    <td class="px-3 py-3 w-[65%]">${line}</td>
                     <td class="px-3 py-3 text-center w-[25%]">
-                        <button class="btn-secondary px-3 py-1 rounded-md transition"
-                            onclick="copySingle('${displayLine}')">Copy</button>
+                        <button class="btn-secondary px-3 py-1 rounded-md"
+                            onclick="copySingle('${line}')">Copy</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -463,43 +464,114 @@
             showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success");
         }
 
-        // --- PARTICLE BACKGROUND SCRIPT ---
+        // --- NEW: ADVANCED PARTICLE BACKGROUND SCRIPT ---
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas); resizeCanvas();
-        function createParticles() {
-            particles = [];
-            for (let i = 0; i < 50; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2 + 1,
-                    dx: (Math.random() - 0.5) * 0.5,
-                    dy: (Math.random() - 0.5) * 0.5
-                });
+        let particleArray;
+
+        const mouse = {
+            x: null,
+            y: null,
+            radius: 150
+        };
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', function() {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init(); // Re-initialize particles on resize
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
             }
         }
-        createParticles();
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function init() {
+            particleArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            if (numberOfParticles > 150) numberOfParticles = 150; // Cap at 150 particles
             
             const isLightMode = document.documentElement.classList.contains('light-mode');
-            ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim();
 
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-                p.x += p.dx; p.y += p.dy;
-                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-            });
-            requestAnimationFrame(drawParticles);
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * .4) - .2;
+                let directionY = (Math.random() * .4) - .2;
+                particleArray.push(new Particle(x, y, directionX, directionY, size, particleColor));
+            }
         }
-        drawParticles();
+
+        function connect() {
+            let opacityValue = 1;
+            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--line-color').trim();
+
+            for (let a = 0; a < particleArray.length; a++) {
+                for (let b = a; b < particleArray.length; b++) {
+                    let distance = ((particleArray[a].x - particleArray[b].x) * (particleArray[a].x - particleArray[b].x)) +
+                        ((particleArray[a].y - particleArray[b].y) * (particleArray[a].y - particleArray[b].y));
+                    if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = lineColor.replace(/,\s*\d?\.?\d*\)/, `,${opacityValue})`); // Dynamically set opacity
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particleArray[a].x, particleArray[a].y);
+                        ctx.lineTo(particleArray[b].x, particleArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+            for (let i = 0; i < particleArray.length; i++) {
+                particleArray[i].update();
+            }
+            connect();
+        }
+
+        resizeCanvas(); // Initial setup
+        animate();
     </script>
 </body>
 </html>
