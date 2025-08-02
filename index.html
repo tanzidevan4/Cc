@@ -16,6 +16,25 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.7); border-radius: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
+
+    /* Table Hard Fix */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #1e293b; /* slate-800 */
+      padding: 12px;
+      font-size: 0.8rem;
+      text-align: left;
+      z-index: 10;
+    }
+    tbody td {
+      padding: 12px;
+      font-size: 1rem; /* বড় ফন্ট সাইজ */
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen flex items-center justify-center">
@@ -78,15 +97,15 @@
       
       <!-- Fixed height + scrollable -->
       <div class="rounded-lg bg-white/20 mb-4 max-h-64 overflow-y-auto">
-        <table class="w-full text-left border-collapse" id="ccTable">
-          <thead class="text-xs uppercase">
+        <table id="ccTable">
+          <thead>
             <tr>
-              <th class="px-3 py-3 sticky top-0 bg-slate-800 z-10">#</th>
-              <th class="px-3 py-3 sticky top-0 bg-slate-800 z-10">Card Details</th>
-              <th class="px-3 py-3 text-center sticky top-0 bg-slate-800 z-10">Action</th>
+              <th>#</th>
+              <th>Card Details</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
-          <tbody class="text-base divide-y divide-white/10">
+          <tbody>
             <!-- Rows dynamically generated here -->
           </tbody>
         </table>
@@ -213,9 +232,9 @@
     output.forEach((line, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td class="px-3 py-3">${index + 1}</td>
-        <td class="px-3 py-3">${line}</td>
-        <td class="px-3 py-3 text-center">
+        <td>${index + 1}</td>
+        <td>${line}</td>
+        <td class="text-center">
           <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
             onclick="copySingle('${line}')">Copy</button>
         </td>
