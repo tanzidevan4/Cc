@@ -12,8 +12,8 @@
         :root {
             --bg-color: #000;
             --text-color: #fff;
-            /* --- MODIFIED: Increased transparency --- */
-            --glass-bg: rgba(255, 255, 255, 0.05); 
+            /* --- MODIFIED: Changed glass to a dark transparent for better contrast with particles --- */
+            --glass-bg: rgba(0, 0, 0, 0.15); 
             --glass-border: rgba(255, 255, 255, 0.12);
             --input-bg: rgba(255, 255, 255, 0.05);
             --input-placeholder-color: rgba(255, 255, 255, 0.4);
@@ -32,13 +32,13 @@
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #000000;
             --particle-color: 'rgba(255,255,255,0.7)';
-            --line-color: 'rgba(255,255,255,0.1)';
+            /* --- MODIFIED: Made lines slightly more visible --- */
+            --line-color: 'rgba(255,255,255,0.2)';
         }
 
         .light-mode {
             --bg-color: #f5f5f5;
             --text-color: #000;
-            /* --- MODIFIED: Increased transparency --- */
             --glass-bg: rgba(255, 255, 255, 0.35);
             --glass-border: rgba(0, 0, 0, 0.1);
             --input-bg: rgba(0, 0, 0, 0.05);
@@ -58,7 +58,8 @@
             --toggle-handle-bg: #ffffff;
             --toggle-handle-on-bg: #ffffff;
             --particle-color: 'rgba(0,0,0,0.7)';
-            --line-color: 'rgba(0,0,0,0.1)';
+            /* --- MODIFIED: Made lines slightly more visible --- */
+            --line-color: 'rgba(0,0,0,0.15)';
         }
 
         body {
@@ -80,11 +81,11 @@
 
         .glass {
             background: var(--glass-bg) !important;
-            /* --- MODIFIED: Reduced blur --- */
-            backdrop-filter: blur(15px) saturate(150%);
-            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            /* --- MODIFIED: Reduced blur for more clarity --- */
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
             border: 1px solid var(--glass-border);
-            transition: background 0.3s ease, border 0.3s ease;
+            transition: background 0.3s ease, border 0.3s ease, backdrop-filter 0.3s ease;
         }
 
         input, select {
@@ -517,14 +518,15 @@
         }
 
         function connect() {
-            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--line-color').trim();
+            const lineColorValue = getComputedStyle(document.documentElement).getPropertyValue('--line-color').trim();
             for (let a = 0; a < particleArray.length; a++) {
                 for (let b = a; b < particleArray.length; b++) {
                     let dx = particleArray[a].x - particleArray[b].x;
                     let dy = particleArray[a].y - particleArray[b].y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 100) {
-                        ctx.strokeStyle = lineColor.replace('0.1', 1 - distance / 100);
+                    if (distance < 120) { // Increased connection distance
+                        const opacity = 1 - (distance / 120);
+                        ctx.strokeStyle = `rgba(${lineColorValue.match(/\d+/g).join(',')}, ${opacity})`;
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particleArray[a].x, particleArray[a].y);
