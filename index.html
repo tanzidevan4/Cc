@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CC Generator - Final UI</title>
+  <title>CC Generator - Final Polished</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -76,18 +76,19 @@
     <div class="flex flex-col">
       <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
       
-      <!-- Fixed header and scrollable body -->
-      <div class="rounded-lg bg-white/20 mb-4">
+      <!-- Header + Scrollable Body with rounded top -->
+      <div class="rounded-lg bg-white/20 mb-4 overflow-hidden">
         <!-- Header -->
         <table class="w-full text-left">
           <thead class="bg-slate-800 text-xs uppercase">
             <tr>
-              <th class="px-3 py-3 text-left">#</th>
+              <th class="px-3 py-3 text-left rounded-tl-lg">#</th>
               <th class="px-3 py-3 text-left">Card Details</th>
-              <th class="px-3 py-3 text-center">Action</th>
+              <th class="px-3 py-3 text-center rounded-tr-lg">Action</th>
             </tr>
           </thead>
         </table>
+
         <!-- Scrollable body -->
         <div class="overflow-y-auto max-h-64">
           <table class="w-full text-left">
