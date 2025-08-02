@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CC Generator - Final Correctedx</title>
+    <title>CC Generator - Final Corrected</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -44,7 +44,7 @@
         .toggle-input:checked + .toggle-bg { background-color: var(--toggle-checked-bg); }
         .toggle-input:checked + .toggle-bg .toggle-dot { transform: translateX(1.5rem); }
 
-        /* --- CORRECT FIX: CSS from Base Script for font handling --- */
+        /* --- CORRECT CSS from Base Script for font handling --- */
         #ccTableBody td:nth-child(2) {
             font-family: monospace;
             white-space: nowrap; /* Keeps text in one line */
@@ -190,8 +190,8 @@
 
         // --- PARTICLE SCRIPT ---
         const canvas = document.getElementById('particles'); const ctx = canvas.getContext('2d'); let particles = [];
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas, false); createParticles(); // Added resize listener for particles too
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; createParticles(); } // Re-create particles on resize
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
         function createParticles() { particles = []; for (let i = 0; i < 50; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2 + 1, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 }); } }
         function drawParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); const isLightMode = document.documentElement.classList.contains('light-mode'); ctx.fillStyle = isLightMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)'; particles.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill(); p.x += p.dx; p.y += p.dy; if (p.x < 0 || p.x > canvas.width) p.dx *= -1; if (p.y < 0 || p.y > canvas.height) p.dy *= -1; }); requestAnimationFrame(drawParticles); }
         drawParticles();
