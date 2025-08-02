@@ -22,8 +22,22 @@
       padding:20px;
       border-radius:12px;
       width:90%;
-      max-width:450px;
+      max-width:500px;
       box-shadow:0 0 20px rgba(0,234,255,0.2);
+    }
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+    }
+    select{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      margin-bottom:15px;
+      background:#222;
+      color:#fff;
+      border:1px solid #00eaff;
     }
     .info p{margin:10px 0;font-size:1rem;line-height:1.4;}
     button{
@@ -49,9 +63,20 @@
 <body>
   <h1>Fake Name & Address Generator</h1>
   <div class="container">
+    <label for="country">Select Country</label>
+    <select id="country">
+      <option value="bd">Bangladesh</option>
+      <option value="us">United States</option>
+      <option value="uk">United Kingdom</option>
+      <option value="in">India</option>
+      <option value="ca">Canada</option>
+    </select>
     <div class="info" id="infoBox">
       <p><strong>Name:</strong> -</p>
       <p><strong>Address:</strong> -</p>
+      <p><strong>City:</strong> -</p>
+      <p><strong>State:</strong> -</p>
+      <p><strong>Zip Code:</strong> -</p>
       <p><strong>Email:</strong> -</p>
       <p><strong>Phone:</strong> -</p>
     </div>
@@ -64,26 +89,69 @@
   <script>
     const firstNames = ["Arif","Sami","Nadia","Rahim","Laila","Tariq","Sonia","Hasib","Afsana","Riyad"];
     const lastNames = ["Hossain","Ahmed","Khan","Chowdhury","Rahman","Miah","Karim","Sheikh","Biswas","Mollah"];
-    const streets = ["Lake Rd","Green Ave","Banani","Gulshan","Dhanmondi","Uttara","Shantinagar","Khilgaon","Bashundhara","Mirpur"];
     const domains = ["gmail.com","yahoo.com","hotmail.com","outlook.com","mail.com"];
+
+    const countries = {
+      bd: {
+        cities:["Dhaka","Chittagong","Sylhet","Khulna","Rajshahi"],
+        states:["Dhaka Division","Chittagong Division","Sylhet Division","Khulna Division"],
+        street:["Banani","Gulshan","Dhanmondi","Mirpur","Uttara"]
+      },
+      us: {
+        cities:["New York","Los Angeles","Chicago","Houston","Miami"],
+        states:["New York","California","Illinois","Texas","Florida"],
+        street:["Main St","Broadway","Maple Ave","Park St","5th Ave"]
+      },
+      uk: {
+        cities:["London","Manchester","Birmingham","Leeds","Liverpool"],
+        states:["England","Wales","Scotland","Northern Ireland"],
+        street:["High St","King's Rd","Queen St","Baker St","Oxford St"]
+      },
+      in: {
+        cities:["Delhi","Mumbai","Bangalore","Hyderabad","Kolkata"],
+        states:["Delhi","Maharashtra","Karnataka","Telangana","West Bengal"],
+        street:["MG Road","Brigade Rd","Park Street","Ring Rd","Linking Rd"]
+      },
+      ca: {
+        cities:["Toronto","Vancouver","Montreal","Calgary","Ottawa"],
+        states:["Ontario","British Columbia","Quebec","Alberta","Manitoba"],
+        street:["Yonge St","Granville St","Queen St","Bloor St","Main St"]
+      }
+    };
 
     const infoBox = document.getElementById("infoBox");
     const generateBtn = document.getElementById("generateBtn");
     const copyBtn = document.getElementById("copyBtn");
+    const countrySelect = document.getElementById("country");
+
+    function randomItem(arr){
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
 
     function generateFakeData(){
-      const first = firstNames[Math.floor(Math.random()*firstNames.length)];
-      const last = lastNames[Math.floor(Math.random()*lastNames.length)];
+      const first = randomItem(firstNames);
+      const last = randomItem(lastNames);
       const name = `${first} ${last}`;
-      const house = Math.floor(Math.random()*900+100);
-      const street = streets[Math.floor(Math.random()*streets.length)];
-      const address = `${house}, ${street}, Dhaka, Bangladesh`;
-      const email = `${first.toLowerCase()}.${last.toLowerCase()}@${domains[Math.floor(Math.random()*domains.length)]}`;
-      const phone = `+8801${Math.floor(Math.random()*9)}${Math.floor(10000000+Math.random()*90000000)}`;
+      const countryCode = countrySelect.value;
+      const data = countries[countryCode];
+
+      const street = randomItem(data.street);
+      const city = randomItem(data.cities);
+      const state = randomItem(data.states);
+      const zip = Math.floor(10000+Math.random()*90000);
+
+      const address = `${Math.floor(1+Math.random()*999)}, ${street}`;
+      const email = `${first.toLowerCase()}.${last.toLowerCase()}@${randomItem(domains)}`;
+      const phone = countryCode==="bd" ? 
+        `+8801${Math.floor(Math.random()*9)}${Math.floor(10000000+Math.random()*90000000)}` : 
+        `+1-${Math.floor(100+Math.random()*900)}-${Math.floor(100+Math.random()*900)}-${Math.floor(1000+Math.random()*9000)}`;
 
       infoBox.innerHTML = `
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Address:</strong> ${address}</p>
+        <p><strong>City:</strong> ${city}</p>
+        <p><strong>State:</strong> ${state}</p>
+        <p><strong>Zip Code:</strong> ${zip}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone}</p>
       `;
