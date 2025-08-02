@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Full Glassified</title>
+  <title>CC Generator - Apple Glass</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -11,23 +11,39 @@
     body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
     canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
 
-    /* Full glass override for all elements inside main card */
-    #mainCard,
-    #mainCard div,
-    #mainCard table,
-    #mainCard thead,
-    #mainCard tbody,
-    #mainCard input,
-    #mainCard select {
-      background: rgba(255, 255, 255, 0.02) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Main container glass */
+    #mainCard {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
-    /* Inputs placeholder color */
+    /* Inputs and selects */
+    #mainCard input, 
+    #mainCard select {
+      background: rgba(255, 255, 255, 0.06) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
     #mainCard input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Table header and rows */
+    #mainCard thead {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+    #mainCard tbody tr {
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s ease;
+    }
+    #mainCard tbody tr:hover {
+      background: rgba(255,255,255,0.07);
+      transform: scale(1.01);
+      box-shadow: 0 0 8px rgba(255,255,255,0.15);
     }
 
     /* Toggle styles */
@@ -37,13 +53,13 @@
     .toggle-input:checked + span .toggle-dot {
       transform: translateX(1.5rem);
       background: #00ffcc;
-      box-shadow: 0 0 10px #00ffcc;
+      box-shadow: 0 0 12px #00ffcc;
     }
     .toggle-dot {
       transition: all 0.3s ease;
     }
 
-    /* Toast styles */
+    /* Toast */
     #toast {
       display: flex;
       align-items: center;
@@ -52,10 +68,10 @@
       transform: translateY(40px);
       box-shadow: 0 0 20px rgba(255,255,255,0.3);
       background: rgba(255,255,255,0.9);
+      color: #000;
     }
     #toast svg { width: 22px; height: 22px; flex-shrink:0; }
 
-    /* Buttons hover */
     button:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,0.3); }
 
     /* Table font size */
@@ -164,7 +180,7 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 text-black px-6 py-3 rounded-xl font-bold">
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl font-bold">
     <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
     <span id="toastMsg"></span>
   </div>
@@ -347,16 +363,4 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fill();
-      p.x += p.dx; p.y += p.dy;
-      if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-    });
-    requestAnimationFrame(drawParticles);
-  }
-  drawParticles();
-</script>
-</body>
-</html>
+      ctx
