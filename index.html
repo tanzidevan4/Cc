@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CC Generator - Premium</title>
+  <title>CC Generator - Ultra Premium</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: #000;
-      color: #fff;
-    }
-    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
 
-    /* Glass effect */
+    /* Gradient overlay */
+    .gradient-bg {
+      position: fixed;
+      top:0;left:0;width:100%;height:100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      animation: gradientMove 8s infinite alternate ease-in-out;
+      z-index: -3;
+    }
+    @keyframes gradientMove {
+      0% { transform: translateX(-10%) translateY(-10%); }
+      100% { transform: translateX(10%) translateY(10%); }
+    }
+
+    /* Glassmorphism card */
     .glass {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
@@ -22,36 +32,30 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Animation */
-    .fade-in {
-      animation: fadeIn 1s ease-in-out forwards;
+    /* Animated toast */
+    #toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       opacity: 0;
+      transform: translateY(40px);
     }
-    @keyframes fadeIn {
-      to { opacity: 1; transform: translateY(0); }
-      from { opacity: 0; transform: translateY(20px); }
-    }
+    #toast svg { width: 22px; height: 22px; flex-shrink:0; }
 
-    /* Hover animations */
+    /* Inputs & buttons */
     input, select, button {
       transition: all 0.3s ease;
     }
-    button:hover {
-      transform: scale(1.05);
-    }
-    table tbody tr:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
+    button:hover { transform: scale(1.05); }
+    table tbody tr { transition: background 0.3s, transform 0.3s; }
+    table tbody tr:hover { background: rgba(255,255,255,0.05); transform: scale(1.01); }
 
-    /* Table text */
     #ccTableBody td:nth-child(2) {
       font-family: monospace;
       letter-spacing: 0.5px;
       white-space: nowrap;
       font-size: 18px;
     }
-
-    /* Small screen adjust */
     @media (max-width: 640px) {
       #ccTableBody td { font-size: 14px; padding: 6px 4px; }
       #ccTableBody td:nth-child(2) { font-size: 12px; }
@@ -61,9 +65,10 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative">
 
+  <div class="gradient-bg"></div>
   <canvas id="particles"></canvas>
 
-  <div class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+  <div id="mainCard" class="glass rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-0 translate-y-10">
     
     <!-- LEFT SIDE -->
     <div class="flex flex-col justify-between">
@@ -116,7 +121,6 @@
         <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
 
         <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
-          <!-- Header -->
           <table class="w-full text-left">
             <thead class="bg-black/50 text-xs uppercase sticky top-0">
               <tr>
@@ -126,11 +130,9 @@
               </tr>
             </thead>
           </table>
-          <!-- Scrollable body -->
           <div class="overflow-y-auto max-h-64 flex-1">
             <table class="w-full text-left">
               <tbody id="ccTableBody" class="text-lg divide-y divide-white/10">
-                <!-- Rows dynamically generated -->
               </tbody>
             </table>
           </div>
@@ -155,10 +157,18 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="hidden fixed bottom-6 bg-white text-black px-6 py-3 rounded-xl shadow-lg font-bold"></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded-xl shadow-lg font-bold">
+    <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <span id="toastMsg"></span>
+  </div>
 
-<!-- Functionality Scripts (same as original) -->
 <script>
+  // GSAP load animation
+  window.addEventListener("load", () => {
+    gsap.to("#mainCard", {opacity:1, y:0, duration:1, ease:"power3.out"});
+  });
+
+  // Year list
   const yearSelect = document.getElementById('year');
   for (let y = 24; y <= 99; y++) {
     const option = document.createElement('option');
@@ -167,13 +177,25 @@
     yearSelect.appendChild(option);
   }
 
-  function showToast(msg) {
+  // Toast animation
+  function showToast(msg, type="success") {
     const toast = document.getElementById('toast');
-    toast.innerText = msg;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 2000);
+    const icon = document.getElementById('toastIcon');
+    const msgSpan = document.getElementById('toastMsg');
+
+    // Set icon based on type
+    if(type==="success") icon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+    if(type==="error") icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
+    if(type==="warn") icon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line>';
+
+    msgSpan.innerText = msg;
+
+    gsap.killTweensOf(toast);
+    gsap.to(toast, {opacity:1, y:0, duration:0.4, ease:"power2.out"});
+    gsap.to(toast, {opacity:0, y:40, delay:2, duration:0.6, ease:"power2.in"});
   }
 
+  // Card logic
   function randomDigit() { return Math.floor(Math.random() * 10); }
   function isValidLuhn(number) {
     let sum = 0, shouldDouble = false;
@@ -218,7 +240,7 @@
     let qty = parseInt(document.getElementById('qty').value);
     let output = [];
 
-    if (pattern.length < 6) { showToast("❌ Pattern must be at least 6 characters!"); return; }
+    if (pattern.length < 6) { showToast("Pattern must be at least 6 characters!", "error"); return; }
 
     const isAmex = pattern.startsWith("3");
     const now = new Date();
@@ -252,6 +274,7 @@
       output.push(`${card}|${mm}|${yy}|${ccv}`);
     }
 
+    // Animate rows
     output.forEach((line, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -263,51 +286,45 @@
         </td>
       `;
       tableBody.appendChild(row);
+      gsap.from(row, {opacity:0, y:20, duration:0.3, delay:index*0.05});
     });
 
     adjustFontSize();
-    showToast("✅ Cards Generated!");
+    showToast("Cards Generated!", "success");
   }
 
   function copySingle(line) {
     const ccOnly = document.getElementById('ccOnlyToggle').checked;
     const textToCopy = ccOnly ? line.split('|')[0] : line;
     navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnly ? "📋 Only CC Number Copied!" : "📋 Full Line Copied!");
+    showToast(ccOnly ? "Only CC Number Copied!" : "Full Line Copied!", "success");
   }
 
   function copyAll() {
     const ccOnly = document.getElementById('ccOnlyToggle').checked;
     const lines = [...document.querySelectorAll("#ccTableBody tr td:nth-child(2)")]
       .map(td => td.textContent);
-    if (lines.length === 0) { showToast("⚠️ Nothing to copy!"); return; }
+    if (lines.length === 0) { showToast("Nothing to copy!", "warn"); return; }
     const textToCopy = ccOnly ? lines.map(line => line.split('|')[0]).join('\n') : lines.join('\n');
     navigator.clipboard.writeText(textToCopy);
-    showToast(ccOnly ? "📋 Only CC Numbers Copied!" : "📋 All Data Copied!");
+    showToast(ccOnly ? "Only CC Numbers Copied!" : "All Data Copied!", "success");
   }
 
   function adjustFontSize() {
     const rows = document.querySelectorAll("#ccTableBody tr td:nth-child(2)");
     rows.forEach(cell => {
-      if (window.innerWidth < 640) {
-        cell.style.fontSize = "12px";
-      } else {
-        cell.style.fontSize = "18px";
-      }
+      if (window.innerWidth < 640) cell.style.fontSize = "12px";
+      else cell.style.fontSize = "18px";
     });
   }
   window.addEventListener("resize", adjustFontSize);
-</script>
 
-<script>
   // Particle background
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let particles = [];
-
   function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   window.addEventListener('resize', resizeCanvas); resizeCanvas();
-
   function createParticles() {
     particles = [];
     for (let i = 0; i < 50; i++) {
@@ -321,13 +338,12 @@
     }
   }
   createParticles();
-
   function drawParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
       ctx.fill();
       p.x += p.dx; p.y += p.dy;
       if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
@@ -337,6 +353,5 @@
   }
   drawParticles();
 </script>
-
 </body>
 </html>
