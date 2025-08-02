@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CC Generator - Final Fixed Version</title>
+    <title>CC Generator - Final Corrected Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -97,8 +97,8 @@
             <div class="flex flex-col flex-1">
                 <label class="block mb-2 text-center font-semibold text-sm">Generated CC:</label>
                 <div class="rounded-xl glass flex-1 flex flex-col overflow-hidden">
-                    <!-- FINAL FIX: Add 'table-fixed' class to enforce column widths -->
-                    <table class="w-full text-left table-fixed">
+                    <!-- FINAL FIX: 'table-fixed' class has been REMOVED -->
+                    <table class="w-full text-left">
                         <thead class="text-xs uppercase sticky top-0">
                             <tr>
                                 <th class="px-3 py-3 text-left rounded-tl-lg w-[10%]">#</th>
@@ -108,8 +108,8 @@
                         </thead>
                     </table>
                     <div class="overflow-y-auto max-h-64 flex-1">
-                        <!-- FINAL FIX: Add 'table-fixed' class here too -->
-                        <table class="w-full text-left table-fixed">
+                        <!-- FINAL FIX: 'table-fixed' class has been REMOVED -->
+                        <table class="w-full text-left">
                             <tbody id="ccTableBody" class="text-lg"></tbody>
                         </table>
                     </div>
@@ -164,7 +164,6 @@
             }
             output.forEach((line, index) => {
                 const row = document.createElement("tr");
-                // The row structure matches the fixed-width columns
                 row.innerHTML = `
                     <td class="px-3 py-3 w-[10%]">${index + 1}</td>
                     <td class="px-3 py-3 w-[65%]">${line}</td>
