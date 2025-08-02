@@ -78,15 +78,15 @@
       
       <!-- Fixed height + scrollable -->
       <div class="rounded-lg bg-white/20 mb-4 max-h-64 overflow-y-auto">
-        <table class="w-full text-left" id="ccTable">
-          <thead class="bg-white/10 text-xs uppercase">
+        <table class="w-full text-left border-collapse" id="ccTable">
+          <thead class="text-xs uppercase">
             <tr>
-              <th class="px-3 py-2 sticky top-0 bg-slate-800">#</th>
-              <th class="px-3 py-2 sticky top-0 bg-slate-800">Card Details</th>
-              <th class="px-3 py-2 text-center sticky top-0 bg-slate-800">Action</th>
+              <th class="px-3 py-3 sticky top-0 bg-slate-800 z-10">#</th>
+              <th class="px-3 py-3 sticky top-0 bg-slate-800 z-10">Card Details</th>
+              <th class="px-3 py-3 text-center sticky top-0 bg-slate-800 z-10">Action</th>
             </tr>
           </thead>
-          <tbody class="text-sm divide-y divide-white/10">
+          <tbody class="text-base divide-y divide-white/10">
             <!-- Rows dynamically generated here -->
           </tbody>
         </table>
@@ -213,9 +213,9 @@
     output.forEach((line, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td class="px-3 py-2">${index + 1}</td>
-        <td class="px-3 py-2">${line}</td>
-        <td class="px-3 py-2 text-center">
+        <td class="px-3 py-3">${index + 1}</td>
+        <td class="px-3 py-3">${line}</td>
+        <td class="px-3 py-3 text-center">
           <button class="bg-cyan-400 text-black px-3 py-1 rounded-md hover:bg-cyan-300 transition"
             onclick="copySingle('${line}')">Copy</button>
         </td>
