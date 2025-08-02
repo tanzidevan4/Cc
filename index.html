@@ -14,6 +14,7 @@
       color: #fff;
       overflow-x: hidden;
     }
+
     canvas {
       position: fixed;
       top: 0;
@@ -23,38 +24,39 @@
       z-index: -2;
     }
 
-    /* Glass effect updated */
+    /* Glass effect more transparent */
     .glass {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.02) !important;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     /* Inputs and selects glass */
     input, select {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.03) !important;
       color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     input::placeholder {
       color: rgba(255, 255, 255, 0.4);
     }
 
-    /* Table styling */
+    /* Table styling more transparent */
     thead {
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.03) !important;
     }
     tbody tr {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.015);
       transition: all 0.3s ease;
     }
     tbody tr:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     /* Toggle styles */
     .toggle-input:checked + span {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.2);
     }
     .toggle-input:checked + span .toggle-dot {
       transform: translateX(1.5rem);
@@ -77,10 +79,7 @@
     #toast svg { width: 22px; height: 22px; flex-shrink:0; }
 
     /* Buttons hover */
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(255,255,255,0.3);
-    }
+    button:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(255,255,255,0.3); }
 
     /* Table font size */
     #ccTableBody td:nth-child(2) {
@@ -381,6 +380,4 @@
     requestAnimationFrame(drawParticles);
   }
   drawParticles();
-</script>
-</body>
-</html>
+</
